@@ -1,0 +1,567 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { 
+  ArrowUpRight,
+  X,
+  Globe,
+  Terminal,
+  Zap,
+  Code,
+  Home,
+  Layers,
+  Sparkles,
+  Cpu,
+  ArrowRight
+} from 'lucide-react';
+
+// --- Custom Hooks ---
+
+const useMousePosition = () => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  return { mouseX, mouseY };
+};
+
+// --- Components ---
+
+const MagneticButton = ({ children, onClick, className = "" }) => {
+  const ref = useRef(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.3, y: middleY * 0.3 });
+  };
+
+  const reset = () => setPosition({ x: 0, y: 0 });
+
+  return (
+    <motion.button
+      ref={ref}
+      onClick={onClick}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      className={`relative inline-flex items-center justify-center ${className}`}
+    >
+      {children}
+    </motion.button>
+  );
+};
+
+const AboutModal = ({ isOpen, onClose }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] flex items-center justify-center p-2 md:p-10 bg-slate-50/95 backdrop-blur-3xl overflow-y-auto"
+        >
+          <motion.div 
+            initial={{ scale: 0.95, y: 40, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.95, y: 40, opacity: 0 }}
+            className="relative w-full max-w-7xl min-h-[90vh] bg-white border border-blue-100 rounded-xl p-6 md:p-16 my-4 shadow-2xl"
+          >
+            <div className="flex justify-between items-center mb-8 md:mb-16">
+              <button 
+                onClick={onClose}
+                className="flex items-center gap-3 px-4 md:px-6 py-2 rounded-md bg-slate-50 border border-slate-200 hover:bg-blue-50 transition-colors text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-900"
+              >
+                <Home size={14} className="text-blue-600" />
+                <span className="hidden xs:inline">Root Terminal</span>
+              </button>
+              
+              <button 
+                onClick={onClose}
+                className="w-10 h-10 md:w-12 md:h-12 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="md:col-span-3 bg-slate-900 rounded-lg p-6 md:p-10 flex flex-col justify-end min-h-[300px]">
+                <h2 className="text-4xl md:text-7xl font-bold tracking-tighter mb-4 md:mb-6 text-white leading-none">The Engineering of <br/><span className="text-blue-500 font-mono">Ellen.sys</span></h2>
+                <p className="text-slate-400 text-sm md:text-lg max-w-xl font-light leading-relaxed">Developing high-performance digital ecosystems through algorithmic precision. Optimized in Tamil Nadu for global scale.</p>
+              </div>
+
+              <div className="md:col-span-1 bg-blue-50 border border-blue-100 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 rounded-lg bg-white flex items-center justify-center mb-4 shadow-sm border border-blue-200">
+                  <Globe className="text-blue-600" />
+                </div>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-slate-400 mb-1 font-bold">Node Location</span>
+                <span className="font-mono text-lg md:text-xl text-slate-900">11.01°N, 76.95°E</span>
+              </div>
+
+              <div className="md:col-span-2 bg-white border border-slate-100 rounded-lg p-6 md:p-10 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                  <Terminal size={18} className="text-blue-600" />
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">Environment Variables</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow'].map(s => (
+                    <span key={s} className="px-3 py-1.5 rounded-sm bg-slate-900 text-white text-[9px] font-mono tracking-tighter">{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="md:col-span-1 bg-blue-600 rounded-lg p-6 md:p-10 flex flex-col justify-between">
+                <Zap className="text-white mb-6" />
+                <div>
+                  <div className="text-4xl md:text-5xl font-bold text-white tracking-tighter">6.0.0</div>
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Build Version (Years)</div>
+                </div>
+              </div>
+
+              <div className="md:col-span-1 bg-slate-50 border border-slate-100 rounded-lg p-6 md:p-8 flex flex-col justify-between font-mono text-slate-400">
+                <Code size={20} />
+                <p className="text-[10px] leading-relaxed uppercase">// code is poetry optimized for performance</p>
+              </div>
+
+              <div className="md:col-span-4 bg-slate-900 rounded-lg p-6 md:p-10 flex flex-col md:flex-row gap-6 justify-between items-center text-white">
+                <span className="text-blue-400 font-mono text-sm md:text-xl text-center md:text-left">System active. Seeking collaborative protocols.</span>
+                <div className="flex gap-4 w-full md:w-auto">
+                  <button onClick={onClose} className="flex-1 md:flex-none px-6 py-3 border border-slate-700 hover:border-blue-500 rounded-md text-[9px] uppercase tracking-[0.2em] font-bold transition-all">Abort</button>
+                  <MagneticButton className="flex-1 md:flex-none px-6 py-3 bg-blue-600 text-white rounded-md text-[9px] uppercase tracking-[0.2em] font-bold shadow-xl shadow-blue-600/20">Init Connect</MagneticButton>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const Navbar = ({ onOpenAbout }) => {
+  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    return scrollY.onChange((latest) => setIsScrolled(latest > 50));
+  }, [scrollY]);
+
+  const isExpanded = !isScrolled || isHovered;
+
+  return (
+    <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
+      <motion.nav 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        initial={false}
+        animate={{
+          width: isExpanded ? "min(600px, 90vw)" : "160px",
+          paddingLeft: isExpanded ? "24px" : "16px",
+          paddingRight: isExpanded ? "24px" : "16px",
+          backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(248, 250, 252, 0.85)",
+          boxShadow: isScrolled ? "0 20px 40px rgba(0,0,0,0.08)" : "0 4px 20px rgba(0,0,0,0.01)",
+          borderColor: isScrolled ? "rgba(37, 99, 235, 0.4)" : "rgba(15, 23, 42, 0.2)"
+        }}
+        transition={{ type: "spring", stiffness: 350, damping: 35 }}
+        className="pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl flex items-center justify-center overflow-hidden"
+      >
+        <AnimatePresence mode="wait">
+          {isExpanded ? (
+            <motion.div 
+              key="full-nav"
+              initial={{ opacity: 0, x: -5 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 5 }}
+              className="flex items-center justify-between w-full"
+            >
+              <div className="flex items-center gap-4 md:gap-10">
+                {['Work', 'Protocol', 'Root'].map((item) => (
+                  <a key={item} href={`#${item.toLowerCase() === 'work' ? 'repositories' : item.toLowerCase()}`} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">{item}</a>
+                ))}
+              </div>
+              <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-8 hover:text-blue-600 transition-colors">Admin</button>
+            </motion.div>
+          ) : (
+            <motion.button 
+              key="shrunk-nav"
+              onClick={onOpenAbout}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex items-center gap-3 md:gap-4 whitespace-nowrap"
+            >
+              <div className="w-1.5 h-1.5 bg-blue-600 shadow-[0_0_15px_#2563eb]" />
+              <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] font-bold text-slate-900 font-mono">SYS.LIVE</span>
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+    </div>
+  );
+};
+
+const Hero = () => {
+  const { mouseX, mouseY } = useMousePosition();
+  const spotlightX = useSpring(mouseX, { stiffness: 100, damping: 20 });
+  const spotlightY = useSpring(mouseY, { stiffness: 100, damping: 20 });
+
+  return (
+    <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-20">
+      {/* Background Grid */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+        style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
+
+      {/* Enhanced Interactive Gradient Spotlight */}
+      <motion.div 
+        style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
+        className="pointer-events-none absolute w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-blue-600/20 rounded-full blur-[120px] md:blur-[160px] z-0 hidden md:block"
+      />
+      <motion.div 
+        style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
+        className="pointer-events-none absolute w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-blue-400/30 rounded-full blur-[60px] md:blur-[100px] z-0 hidden md:block"
+      />
+
+      <div className="relative z-10 max-w-7xl">
+        <motion.div
+           initial={{ opacity: 0, scale: 0.9 }}
+           animate={{ opacity: 1, scale: 1 }}
+           transition={{ duration: 1 }}
+           className="mb-10 md:mb-14"
+        >
+          <span className="px-4 md:px-8 py-2 md:py-3 bg-slate-900 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-blue-400 font-bold font-mono">
+            &lt; DEV_PORTFOLIO /&gt; V2.6
+          </span>
+        </motion.div>
+
+        <h1 className="text-[14vw] md:text-[11vw] font-bold leading-[0.8] tracking-tighter mb-8 md:mb-14 text-slate-900">
+          <div className="overflow-hidden py-1">
+            <motion.span 
+              initial={{ y: "110%" }} 
+              animate={{ y: 0 }} 
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block"
+            >
+              ARCHITECTING
+            </motion.span>
+          </div>
+          <div className="overflow-hidden py-1">
+            <motion.span 
+              initial={{ y: "110%" }} 
+              animate={{ y: 0 }} 
+              transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block text-blue-600 font-mono italic"
+            >
+              STABLE_LOGIC
+            </motion.span>
+          </div>
+        </h1>
+
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 1 }}
+          className="text-slate-400 text-sm md:text-2xl max-w-2xl mx-auto font-light leading-relaxed font-mono uppercase tracking-tight px-4"
+        >
+          Optimizing user interaction through high-performance engineering.
+        </motion.p>
+      </div>
+
+      <motion.div 
+        animate={{ y: [0, 10, 0] }} 
+        transition={{ duration: 2, repeat: Infinity }}
+        className="absolute bottom-10 md:bottom-16 flex flex-col items-center gap-4"
+      >
+        <div className="w-[1px] h-10 md:h-16 bg-blue-100" />
+        <span className="text-[7px] md:text-[8px] uppercase tracking-[0.5em] text-blue-600 font-bold">Scroll Output</span>
+      </motion.div>
+    </section>
+  );
+};
+
+const ProjectItem = ({ project, index }) => {
+  const container = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start end", "end start"]
+  });
+
+  const xTitle = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const scanLineY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  return (
+    <motion.div 
+      ref={container}
+      initial={{ opacity: 0, y: 100, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: false, margin: "-100px" }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
+      className="relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border border-slate-100 bg-white shadow-xl shadow-blue-900/5"
+    >
+      <motion.div 
+        style={{ top: scanLineY }}
+        className="absolute left-0 right-0 h-[1px] bg-blue-500/20 z-40 pointer-events-none"
+      />
+
+      <div className="absolute top-0 left-0 p-6 md:p-8 z-30">
+          <span className="text-[8px] md:text-[10px] font-mono text-blue-600/40 tracking-widest">00{index + 1}_NODE</span>
+      </div>
+
+      <div className="absolute inset-0 overflow-hidden flex items-center justify-center">
+        <motion.div 
+          style={{ x: xTitle }}
+          className="opacity-[0.03] select-none whitespace-nowrap"
+        >
+          <span className="text-slate-900 font-bold text-[35vw] md:text-[40vw] uppercase font-mono leading-none">
+            {project.title}
+          </span>
+        </motion.div>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 p-8 md:p-24 z-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="max-w-2xl">
+          <div className="flex gap-2 mb-4 md:mb-8">
+            {project.tags.map(t => (
+               <span key={t} className="px-2 py-0.5 bg-slate-900 text-[8px] uppercase tracking-widest text-white font-mono">{t}</span>
+            ))}
+          </div>
+          <h3 className="text-5xl md:text-[9rem] font-bold text-slate-900 mb-4 md:mb-6 tracking-tighter leading-none group-hover:text-blue-600 transition-colors">
+            {project.title}
+          </h3>
+          <p className="text-slate-500 text-sm md:text-xl leading-relaxed font-light max-w-lg font-mono uppercase tracking-tighter">
+            {project.description}
+          </p>
+        </div>
+        
+        <div className="flex flex-col items-start md:items-center gap-2">
+          <span className="text-[7px] uppercase tracking-[0.4em] text-blue-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">Execute_Launch</span>
+          <MagneticButton className="w-16 h-16 md:w-24 md:h-24 bg-blue-600 text-white hover:bg-slate-900 transition-all shadow-xl group/btn">
+            <ArrowUpRight size={28} className="group-hover/btn:scale-125 transition-transform" />
+          </MagneticButton>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const PhilosophySection = () => {
+  const container = useRef(null);
+  const { scrollYProgress } = useScroll({ target: container, offset: ["start end", "end start"] });
+  const xText = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
+  return (
+    <section ref={container} id="protocol" className="py-24 md:py-52 bg-slate-900 overflow-hidden relative border-y border-white/5">
+      <motion.div style={{ x: xText }} className="flex whitespace-nowrap mb-16 md:mb-24 opacity-10 pointer-events-none">
+        <h2 className="text-[20vw] md:text-[15vw] font-mono uppercase tracking-tighter leading-none text-blue-500">
+          PERFORMANT &middot; SECURE &middot; ATOMIC &middot; 
+        </h2>
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto px-6 md:px-10 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+          <div>
+            <div className="w-12 md:w-16 h-[2px] bg-blue-600 mb-8 md:mb-12" />
+            <h3 className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold text-blue-500 mb-6 md:mb-10">Core Protocols</h3>
+            <p className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
+              Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            <div className="p-6 md:p-10 bg-slate-800 border border-white/5 flex flex-col gap-6 md:gap-10 aspect-square justify-between group">
+              <Layers className="text-blue-500" size={24} />
+              <span className="text-[8px] md:text-[10px] font-mono text-slate-500 uppercase">Architecture</span>
+            </div>
+            <div className="p-6 md:p-10 bg-blue-600 flex flex-col gap-6 md:gap-10 aspect-square justify-between">
+              <Sparkles className="text-white" size={24} />
+              <span className="text-[8px] md:text-[10px] font-mono text-white/60 uppercase">Heuristics</span>
+            </div>
+            <div className="p-6 md:p-10 bg-slate-900 border border-white/10 flex flex-col gap-6 md:gap-10 aspect-square justify-between">
+              <Cpu className="text-blue-500" size={24} />
+              <span className="text-[8px] md:text-[10px] font-mono text-slate-500 uppercase">Compute</span>
+            </div>
+            <div className="p-6 md:p-10 bg-white flex flex-col gap-6 md:gap-10 aspect-square justify-between">
+              <Code className="text-slate-900" size={24} />
+              <span className="text-[8px] md:text-[10px] font-mono text-slate-400 uppercase">Syntax</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Footer = () => {
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+      setTime(new Intl.DateTimeFormat('en-GB', options).format(new Date()));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <footer className="relative bg-white pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t border-slate-100">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-24">
+        <div className="md:col-span-2">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-6 md:mb-10 text-slate-900">ELLEN_STUDIO<span className="text-blue-600 font-mono">.BIN</span></h2>
+          <p className="text-slate-400 max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter">Developing the future of digital interaction through code-first methodologies.</p>
+        </div>
+        
+        {['Directories', 'Nodes'].map((category, idx) => (
+          <div key={category}>
+            <h3 className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] text-slate-300 mb-6 md:mb-12 font-bold font-mono">{category}</h3>
+            <ul className="flex flex-col gap-3 md:gap-5 text-[10px] md:text-xs font-bold text-slate-600">
+              {(idx === 0 ? ['Work', 'History', 'Contact'] : ['GitHub', 'NPM', 'LinkedIn']).map(i => (
+                <li key={i}><a href="#" className="hover:text-blue-600 transition-colors uppercase tracking-widest font-mono">{i}</a></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="max-w-7xl mx-auto mt-24 md:mt-40 flex flex-col md:flex-row justify-between items-center gap-12">
+        <div className="flex flex-col items-center md:items-start gap-4">
+          <div className="signature text-5xl md:text-6xl text-slate-900 mb-2">Ellen</div>
+          <div className="flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono text-slate-300">
+            <span>&copy; 2026_STUDIO</span>
+            <span>NODE: TN_IN</span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-6 md:gap-10">
+          <div className="flex flex-col items-end">
+             <span className="text-[7px] md:text-[8px] uppercase tracking-[0.4em] text-blue-600 font-bold mb-1 font-mono">Local_Time</span>
+             <span className="text-xs md:text-sm font-mono font-bold text-slate-900 tracking-widest">{time}</span>
+          </div>
+          <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="w-12 h-12 md:w-16 md:h-16 border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white bg-slate-50 transition-all group">
+            <ArrowUpRight size={20} className="-rotate-45" />
+          </button>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+const App = () => {
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  
+  const projects = [
+    { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
+    { title: "QUBIT", tags: ["Go", "React"], description: "Visual debugger for quantum circuit execution and state monitoring." },
+    { title: "SHARD", tags: ["Rust", "Wasm"], description: "Distributed file storage protocol with sub-millisecond propagation." },
+    { title: "KINETIC", tags: ["Swift", "ThreeJS"], description: "Motion-sensitive architectural visualization using volumetric rendering." },
+  ];
+
+  return (
+    <div className="bg-white min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
+      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+      
+      <Navbar onOpenAbout={() => setIsAboutOpen(true)} />
+      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      
+      <Hero />
+
+      <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-100 pb-12 gap-8">
+          <div>
+            <h2 className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold text-blue-600 mb-4 md:mb-6 font-mono">Stack // 2026</h2>
+            <p className="text-3xl md:text-4xl font-bold tracking-tighter">Verified Deployments</p>
+          </div>
+          <span className="text-[8px] md:text-[10px] text-slate-300 uppercase tracking-[0.4em] font-bold font-mono">Status: Online</span>
+        </div>
+        
+        <div className="space-y-[6vh] md:space-y-[10vh]">
+          {projects.map((p, i) => (
+            <ProjectItem key={p.title} project={p} index={i} />
+          ))}
+        </div>
+      </section>
+
+      <PhilosophySection />
+
+      <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden bg-white pt-20">
+        <div className="text-center relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-10 md:mb-12 mt-20 md:mt-24"
+          >
+            <span className="px-6 md:px-10 py-3 md:py-4 bg-slate-900 text-[8px] md:text-[9px] uppercase tracking-[0.6em] text-blue-400 font-bold font-mono shadow-sm">Connection: Listening</span>
+          </motion.div>
+          
+          <h2 className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] text-slate-900 uppercase">
+            Execute <br className="hidden md:block" /> <span className="text-blue-600 italic font-mono">Command.</span>
+          </h2>
+          
+          <div className="pb-20 md:pb-0">
+            <MagneticButton className="px-12 md:px-20 py-6 md:py-10 bg-blue-600 text-white font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] hover:bg-slate-900 transition-all shadow-2xl">
+               Initiate Thread <ArrowRight size={18} className="ml-3 md:ml-4 inline" />
+            </MagneticButton>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+      <style>{`
+        * { cursor: none; scroll-behavior: smooth; }
+        @media (max-width: 1024px) {
+          * { cursor: auto !important; }
+          .cursor-follow { display: none !important; }
+        }
+        body { background: #ffffff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .signature { font-family: 'Great Vibes', cursive; }
+        
+        .cursor-follow {
+          position: fixed;
+          width: 6px;
+          height: 6px;
+          background: #2563eb;
+          pointer-events: none;
+          z-index: 9999;
+          box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
+        }
+        
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: #ffffff; }
+        ::-webkit-scrollbar-thumb { background: #2563eb; }
+      `}</style>
+      
+      <CursorFollower />
+    </div>
+  );
+};
+
+const CursorFollower = () => {
+  const { mouseX, mouseY } = useMousePosition();
+  const springX = useSpring(mouseX, { stiffness: 1000, damping: 60 });
+  const springY = useSpring(mouseY, { stiffness: 1000, damping: 60 });
+
+  return (
+    <motion.div 
+      style={{ left: springX, top: springY }}
+      className="cursor-follow"
+    />
+  );
+}
+
+export default App;
