@@ -11,7 +11,10 @@ import {
   Layers,
   Sparkles,
   Cpu,
-  ArrowRight
+  ArrowRight,
+  User,
+  Quote,
+  Lightbulb
 } from 'lucide-react';
 
 // --- Custom Hooks ---
@@ -150,7 +153,125 @@ const AboutModal = ({ isOpen, onClose }) => {
   );
 };
 
-const Navbar = ({ onOpenAbout }) => {
+// --- Modal 2: Inspirations (Stacking Scroll) ---
+const InspirationsModal = ({ isOpen, onClose }) => {
+  const figures = [
+    {
+      name: "Isaac Newton",
+      legacy: "Laws of Motion, Gravity, Differential and Integral Calculus.",
+      achievement: "Achieved his primary breakthroughs before turning 26.",
+      color: "bg-blue-600"
+    },
+    {
+      name: "Steve Jobs",
+      legacy: "Apple, Transformative Marketing, and Mindmastery.",
+      achievement: "Revolutionized personal computing and design aesthetics.",
+      color: "bg-slate-900"
+    },
+    {
+      name: "Guido Van Rossum",
+      legacy: "Benevolent Dictator for Life of the Python Language.",
+      achievement: "Prioritized code readability and programmer productivity.",
+      color: "bg-blue-500"
+    },
+    {
+      name: "Ada Lovelace",
+      legacy: "The First Computer Algorithm for the Analytical Engine.",
+      achievement: "Envisioned computers as more than just calculating machines.",
+      color: "bg-slate-800"
+    },
+    {
+      name: "Mark Zuckerberg",
+      legacy: "Facebook, Connectivity, and Young Entrepreneurship.",
+      achievement: "Redefined social interaction and scaled systems globally.",
+      color: "bg-blue-700"
+    }
+  ];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-white overflow-hidden"
+        >
+          <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-32 scrollbar-hide">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-20">
+                <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-slate-900 mb-6">ARCHETYPES</h2>
+                <p className="text-slate-400 font-mono text-xs uppercase tracking-widest">Architects of the modern intellectual landscape.</p>
+              </div>
+
+              <div className="space-y-[10vh] pb-[20vh]">
+                {figures.map((figure, idx) => (
+                  <InspirationCard key={figure.name} figure={figure} index={idx} total={figures.length} />
+                ))}
+              </div>
+            </div>
+
+            {/* Sticky controls */}
+            <div className="fixed top-8 right-8 z-[210]">
+              <button 
+                onClick={onClose}
+                className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+              >
+                <X size={24} />
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const InspirationCard = ({ figure, index, total }) => {
+  const container = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start end", "start start"]
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
+
+  return (
+    <motion.div 
+      ref={container}
+      style={{ scale, opacity, zIndex: index }}
+      className={`sticky top-[15vh] w-full min-h-[400px] md:min-h-[500px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden`}
+    >
+      <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
+        <Lightbulb size={200} strokeWidth={1} />
+      </div>
+
+      <div className="relative z-10">
+        <div className="flex items-center gap-4 mb-8">
+          <span className="w-8 h-[1px] bg-white/40" />
+          <span className="text-[10px] font-mono tracking-widest uppercase opacity-60">Sequence_0{index + 1}</span>
+        </div>
+        <h3 className="text-4xl md:text-7xl font-bold tracking-tighter mb-6">{figure.name}</h3>
+        <p className="text-lg md:text-2xl font-light opacity-80 max-w-xl mb-12 italic leading-tight">
+          "{figure.legacy}"
+        </p>
+      </div>
+
+      <div className="relative z-10 border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="max-w-md">
+          <span className="text-[8px] uppercase tracking-widest font-bold opacity-40 mb-2 block">Breakthrough_Event</span>
+          <p className="text-sm font-mono leading-relaxed">{figure.achievement}</p>
+        </div>
+        <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
+          <ArrowRight size={20} />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -168,7 +289,7 @@ const Navbar = ({ onOpenAbout }) => {
         onMouseLeave={() => setIsHovered(false)}
         initial={false}
         animate={{
-          width: isExpanded ? "min(600px, 90vw)" : "160px",
+          width: isExpanded ? "min(650px, 90vw)" : "160px",
           paddingLeft: isExpanded ? "24px" : "16px",
           paddingRight: isExpanded ? "24px" : "16px",
           backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(248, 250, 252, 0.85)",
@@ -187,12 +308,13 @@ const Navbar = ({ onOpenAbout }) => {
               exit={{ opacity: 0, x: 5 }}
               className="flex items-center justify-between w-full"
             >
-              <div className="flex items-center gap-4 md:gap-10">
+              <div className="flex items-center gap-4 md:gap-8">
                 {['Work', 'Protocol', 'Root'].map((item) => (
                   <a key={item} href={`#${item.toLowerCase() === 'work' ? 'repositories' : item.toLowerCase()}`} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">{item}</a>
                 ))}
+                <button onClick={onOpenInspirations} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">Inspirations</button>
               </div>
-              <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-8 hover:text-blue-600 transition-colors">Admin</button>
+              <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-6 hover:text-blue-600 transition-colors">Admin</button>
             </motion.div>
           ) : (
             <motion.button 
@@ -220,11 +342,9 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-20">
-      {/* Background Grid */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
         style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
 
-      {/* Enhanced Interactive Gradient Spotlight */}
       <motion.div 
         style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
         className="pointer-events-none absolute w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-blue-600/20 rounded-full blur-[120px] md:blur-[160px] z-0 hidden md:block"
@@ -308,8 +428,11 @@ const ProjectItem = ({ project, index }) => {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: false, margin: "-100px" }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-      className="relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border border-slate-100 bg-white shadow-xl shadow-blue-900/5"
+      className="relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 border-slate-200 bg-white shadow-2xl shadow-blue-900/10 hover:border-blue-500 transition-colors duration-500"
     >
+      {/* Visual Outline Overlay */}
+      <div className="absolute inset-2 border border-slate-100 pointer-events-none group-hover:border-blue-100 transition-colors duration-500" />
+      
       <motion.div 
         style={{ top: scanLineY }}
         className="absolute left-0 right-0 h-[1px] bg-blue-500/20 z-40 pointer-events-none"
@@ -403,7 +526,7 @@ const PhilosophySection = () => {
   );
 };
 
-const Footer = () => {
+const Footer = ({ onOpenInspirations }) => {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -428,8 +551,14 @@ const Footer = () => {
           <div key={category}>
             <h3 className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] text-slate-300 mb-6 md:mb-12 font-bold font-mono">{category}</h3>
             <ul className="flex flex-col gap-3 md:gap-5 text-[10px] md:text-xs font-bold text-slate-600">
-              {(idx === 0 ? ['Work', 'History', 'Contact'] : ['GitHub', 'NPM', 'LinkedIn']).map(i => (
-                <li key={i}><a href="#" className="hover:text-blue-600 transition-colors uppercase tracking-widest font-mono">{i}</a></li>
+              {(idx === 0 ? ['Work', 'History', 'Inspirations'] : ['GitHub', 'NPM', 'LinkedIn']).map(i => (
+                <li key={i}>
+                  {i === 'Inspirations' ? (
+                    <button onClick={onOpenInspirations} className="hover:text-blue-600 transition-colors uppercase tracking-widest font-mono text-left">Inspirations</button>
+                  ) : (
+                    <a href="#" className="hover:text-blue-600 transition-colors uppercase tracking-widest font-mono">{i}</a>
+                  )}
+                </li>
               ))}
             </ul>
           </div>
@@ -461,6 +590,7 @@ const Footer = () => {
 
 const App = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
   
   const projects = [
     { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
@@ -473,8 +603,9 @@ const App = () => {
     <div className="bg-white min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
       <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
       
-      <Navbar onOpenAbout={() => setIsAboutOpen(true)} />
+      <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
       
       <Hero />
 
@@ -519,7 +650,7 @@ const App = () => {
         </div>
       </section>
 
-      <Footer />
+      <Footer onOpenInspirations={() => setIsInspirationsOpen(true)} />
 
       <style>{`
         * { cursor: none; scroll-behavior: smooth; }
@@ -530,6 +661,8 @@ const App = () => {
         body { background: #ffffff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .signature { font-family: 'Great Vibes', cursive; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         
         .cursor-follow {
           position: fixed;
