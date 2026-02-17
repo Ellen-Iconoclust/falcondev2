@@ -696,7 +696,7 @@ const PhilosophySection = () => {
   );
 };
 
-const Footer = ({ onOpenInspirations }) => {
+const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -762,7 +762,6 @@ const Footer = ({ onOpenInspirations }) => {
     </footer>
   );
 };
-
 const App = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
