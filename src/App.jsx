@@ -696,7 +696,7 @@ const PhilosophySection = () => {
   );
 };
 
-const Footer = ({ onOpenInspirations, onOpenAbout }) => {
+const Footer = ({ onOpenInspirations }) => {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -710,28 +710,23 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   }, []);
 
   return (
-    <footer className="relative bg-white pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t border-slate-200">
+    <footer className="relative bg-white pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t border-slate-100">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-24">
         <div className="md:col-span-2">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-6 md:mb-10 text-slate-900">ELLEN_STUDIO<span className="text-blue-600 font-mono">.BIN</span></h2>
-          <p className="text-slate-500 max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter">Developing the future of digital interaction through code-first methodologies.</p>
+          <p className="text-slate-400 max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter">Developing the future of digital interaction through code-first methodologies.</p>
         </div>
         
         {['Directories', 'Nodes'].map((category, idx) => (
           <div key={category}>
-            <h3 className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] text-slate-500 mb-6 md:mb-12 font-bold font-mono">{category}</h3>
-            <ul className="flex flex-col gap-3 md:gap-5 text-[10px] md:text-xs font-bold">
-              {(idx === 0 
-                ? ['Work', 'History', 'Inspirations', 'About'] 
-                : ['GitHub', 'NPM', 'LinkedIn']
-              ).map(i => (
+            <h3 className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] text-slate-300 mb-6 md:mb-12 font-bold font-mono">{category}</h3>
+            <ul className="flex flex-col gap-3 md:gap-5 text-[10px] md:text-xs font-bold text-slate-600">
+              {(idx === 0 ? ['Work', 'History', 'Inspirations'] : ['GitHub', 'NPM', 'LinkedIn']).map(i => (
                 <li key={i}>
                   {i === 'Inspirations' ? (
-                    <button onClick={onOpenInspirations} className="text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest font-mono text-left">{i}</button>
-                  ) : i === 'About' ? (
-                    <button onClick={onOpenAbout} className="text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest font-mono text-left">{i}</button>
+                    <button onClick={onOpenInspirations} className="hover:text-blue-600 transition-colors uppercase tracking-widest font-mono text-left">Inspirations</button>
                   ) : (
-                    <a href="#" className="text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest font-mono">{i}</a>
+                    <a href="#" className="hover:text-blue-600 transition-colors uppercase tracking-widest font-mono">{i}</a>
                   )}
                 </li>
               ))}
@@ -743,7 +738,7 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
       <div className="max-w-7xl mx-auto mt-24 md:mt-40 flex flex-col md:flex-row justify-between items-center gap-12">
         <div className="flex flex-col items-center md:items-start gap-4">
           <div className="signature text-5xl md:text-6xl text-slate-900 mb-2">Ellen</div>
-          <div className="flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono text-slate-500">
+          <div className="flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono text-slate-300">
             <span>&copy; 2026_STUDIO</span>
             <span>NODE: TN_IN</span>
           </div>
@@ -752,9 +747,9 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
         <div className="flex items-center gap-6 md:gap-10">
           <div className="flex flex-col items-end">
              <span className="text-[7px] md:text-[8px] uppercase tracking-[0.4em] text-blue-600 font-bold mb-1 font-mono">Local_Time</span>
-             <span className="text-xs md:text-sm font-mono font-bold text-slate-700 tracking-widest">{time}</span>
+             <span className="text-xs md:text-sm font-mono font-bold text-slate-900 tracking-widest">{time}</span>
           </div>
-          <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="w-12 h-12 md:w-16 md:h-16 border border-slate-300 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 bg-slate-50 transition-all group">
+          <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="w-12 h-12 md:w-16 md:h-16 border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white bg-slate-50 transition-all group">
             <ArrowUpRight size={20} className="-rotate-45" />
           </button>
         </div>
@@ -762,6 +757,7 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
     </footer>
   );
 };
+
 const App = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
