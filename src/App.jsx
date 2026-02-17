@@ -154,6 +154,7 @@ const AboutModal = ({ isOpen, onClose }) => {
 };
 
 // --- Modal 2: Inspirations (Stacking Scroll) ---
+// --- Modal 2: Inspirations (Stacking Scroll) ---
 const InspirationsModal = ({ isOpen, onClose }) => {
   const figures = [
     {
@@ -195,16 +196,16 @@ const InspirationsModal = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-white overflow-hidden"
+          className="fixed inset-0 z-[200] flex items-start justify-center bg-white overflow-hidden"
         >
-          <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-32 scrollbar-hide">
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-20">
+          <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-12 scrollbar-hide">
+            <div className="max-w-4xl mx-auto min-h-full">
+              <div className="mb-20 md:mb-32">
                 <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-slate-900 mb-6">ARCHETYPES</h2>
                 <p className="text-slate-400 font-mono text-xs uppercase tracking-widest">Architects of the modern intellectual landscape.</p>
               </div>
 
-              <div className="space-y-[10vh] pb-[20vh]">
+              <div className="relative pb-[50vh]">
                 {figures.map((figure, idx) => (
                   <InspirationCard key={figure.name} figure={figure} index={idx} total={figures.length} />
                 ))}
@@ -231,17 +232,29 @@ const InspirationCard = ({ figure, index, total }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ["start end", "start start"]
+    offset: ["start end", "end start"]
   });
 
-  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3], [0.3, 1]);
+  const y = useTransform(
+    scrollYProgress, 
+    [0, 0.2, 0.8, 1], 
+    [100, 0, 0, -50]
+  );
 
   return (
     <motion.div 
       ref={container}
-      style={{ scale, opacity, zIndex: index }}
-      className={`sticky top-[15vh] w-full min-h-[400px] md:min-h-[500px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden`}
+      style={{ 
+        scale, 
+        opacity,
+        y,
+        zIndex: index,
+        position: 'sticky',
+        top: `${15 + index * 2}vh`,
+      }}
+      className={`w-full min-h-[400px] md:min-h-[500px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden mb-8`}
     >
       <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
         <Lightbulb size={200} strokeWidth={1} />
