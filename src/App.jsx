@@ -351,7 +351,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   return (
     <>
-      {/* Desktop Navbar - unchanged */}
+      {/* Desktop Navbar - with "About" instead of "Admin" */}
       <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
         <motion.nav 
           onMouseEnter={() => setIsHovered(true)}
@@ -383,7 +383,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                   ))}
                   <button onClick={onOpenInspirations} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">Inspirations</button>
                 </div>
-                <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-6 hover:text-blue-600 transition-colors">Admin</button>
+                <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-6 hover:text-blue-600 transition-colors">About</button>
               </motion.div>
             ) : (
               <motion.button 
