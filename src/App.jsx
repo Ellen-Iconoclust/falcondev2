@@ -973,14 +973,13 @@ const CursorFollower = () => {
 
   return (
     <motion.div 
-      style={{ left: springX, top: springY }}
-      className="cursor-follow"
       style={{ 
         left: springX, 
         top: springY,
         backgroundColor: theme.cursorColor,
         boxShadow: `0 0 15px ${theme.cursorColor}`
       }}
+      className="cursor-follow"
     />
   );
 };
@@ -989,7 +988,6 @@ const App = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
-  const { theme } = useTheme();
   
   const projects = [
     { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
@@ -1004,107 +1002,131 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <div className={`min-h-screen ${theme.bg} ${theme.text} selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden ${theme.font}`}>
-        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
-        
-        <AnimatePresence mode="wait">
-          {showLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
-        </AnimatePresence>
-
-        {!showLoading && (
-          <>
-            <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
-            <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-            <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
-            
-            <Hero />
-
-            <section id="repositories" className={`px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40`}>
-              <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b ${theme.border} pb-12 gap-8`}>
-                <div>
-                  <h2 className={`text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold ${theme.accent} mb-4 md:mb-6 font-mono`}>Stack // 2026</h2>
-                  <p className={`text-3xl md:text-4xl font-bold tracking-tighter ${theme.text}`}>Verified Deployments</p>
-                </div>
-                <span className={`text-[8px] md:text-[10px] ${theme.textMuted} uppercase tracking-[0.4em] font-bold font-mono`}>Status: Online</span>
-              </div>
-              
-              <div className="space-y-[6vh] md:space-y-[10vh]">
-                {projects.map((p, i) => (
-                  <ProjectItem key={p.title} project={p} index={i} />
-                ))}
-              </div>
-            </section>
-
-            <PhilosophySection />
-
-            <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden ${theme.bg} pt-20`}>
-              <div className="text-center relative z-10">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="mb-10 md:mb-12 mt-20 md:mt-24"
-                >
-                  <span className={`px-6 md:px-10 py-3 md:py-4 ${theme.accentBg} text-[8px] md:text-[9px] uppercase tracking-[0.6em] text-white font-bold font-mono shadow-sm`}>Connection: Listening</span>
-                </motion.div>
-                
-                <h2 className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] ${theme.text} uppercase`}>
-                  Execute <br className="hidden md:block" /> <span className={`${theme.accent} italic font-mono`}>Command.</span>
-                </h2>
-                
-                <div className="pb-20 md:pb-0">
-                  <MagneticButton className={`px-12 md:px-20 py-6 md:py-10 ${theme.accentBg} text-white font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] hover:bg-slate-900 transition-all shadow-2xl`}>
-                     Initiate Thread <ArrowRight size={18} className="ml-3 md:ml-4 inline" />
-                  </MagneticButton>
-                </div>
-              </div>
-            </section>
-
-            <Footer 
-              onOpenInspirations={() => setIsInspirationsOpen(true)} 
-              onOpenAbout={() => setIsAboutOpen(true)} 
-            />
-          </>
-        )}
-
-        <style>{`
-          * { 
-            cursor: none; 
-            scroll-behavior: smooth; 
-          }
-          @media (max-width: 1024px) {
-            * { cursor: auto !important; }
-            .cursor-follow { display: none !important; }
-          }
-          body { 
-            background: ${theme.bg}; 
-            font-family: 'Space Grotesk', sans-serif; 
-            overflow-x: hidden; 
-          }
-          .font-mono { font-family: 'JetBrains Mono', monospace; }
-          .signature { font-family: 'Great Vibes', cursive; }
-          .scrollbar-hide::-webkit-scrollbar { display: none; }
-          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-          
-          .cursor-follow {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: ${theme.cursorColor};
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 15px ${theme.cursorColor};
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-          }
-          
-          ::-webkit-scrollbar { width: 3px; }
-          ::-webkit-scrollbar-track { background: ${theme.bg}; }
-          ::-webkit-scrollbar-thumb { background: ${theme.cursorColor}; }
-        `}</style>
-        
-        <CursorFollower />
-      </div>
+      <AppContent 
+        showLoading={showLoading}
+        handleLoadingComplete={handleLoadingComplete}
+        isAboutOpen={isAboutOpen}
+        setIsAboutOpen={setIsAboutOpen}
+        isInspirationsOpen={isInspirationsOpen}
+        setIsInspirationsOpen={setIsInspirationsOpen}
+        projects={projects}
+      />
     </ThemeProvider>
+  );
+};
+
+const AppContent = ({ 
+  showLoading, 
+  handleLoadingComplete, 
+  isAboutOpen, 
+  setIsAboutOpen, 
+  isInspirationsOpen, 
+  setIsInspirationsOpen, 
+  projects 
+}) => {
+  const { theme } = useTheme();
+
+  return (
+    <div className={`min-h-screen ${theme.bg} ${theme.text} selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden ${theme.font}`}>
+      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+      
+      <AnimatePresence mode="wait">
+        {showLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
+      </AnimatePresence>
+
+      {!showLoading && (
+        <>
+          <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
+          <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+          <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
+          
+          <Hero />
+
+          <section id="repositories" className={`px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40`}>
+            <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b ${theme.border} pb-12 gap-8`}>
+              <div>
+                <h2 className={`text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold ${theme.accent} mb-4 md:mb-6 font-mono`}>Stack // 2026</h2>
+                <p className={`text-3xl md:text-4xl font-bold tracking-tighter ${theme.text}`}>Verified Deployments</p>
+              </div>
+              <span className={`text-[8px] md:text-[10px] ${theme.textMuted} uppercase tracking-[0.4em] font-bold font-mono`}>Status: Online</span>
+            </div>
+            
+            <div className="space-y-[6vh] md:space-y-[10vh]">
+              {projects.map((p, i) => (
+                <ProjectItem key={p.title} project={p} index={i} />
+              ))}
+            </div>
+          </section>
+
+          <PhilosophySection />
+
+          <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden ${theme.bg} pt-20`}>
+            <div className="text-center relative z-10">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-10 md:mb-12 mt-20 md:mt-24"
+              >
+                <span className={`px-6 md:px-10 py-3 md:py-4 ${theme.accentBg} text-[8px] md:text-[9px] uppercase tracking-[0.6em] text-white font-bold font-mono shadow-sm`}>Connection: Listening</span>
+              </motion.div>
+              
+              <h2 className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] ${theme.text} uppercase`}>
+                Execute <br className="hidden md:block" /> <span className={`${theme.accent} italic font-mono`}>Command.</span>
+              </h2>
+              
+              <div className="pb-20 md:pb-0">
+                <MagneticButton className={`px-12 md:px-20 py-6 md:py-10 ${theme.accentBg} text-white font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] hover:bg-slate-900 transition-all shadow-2xl`}>
+                   Initiate Thread <ArrowRight size={18} className="ml-3 md:ml-4 inline" />
+                </MagneticButton>
+              </div>
+            </div>
+          </section>
+
+          <Footer 
+            onOpenInspirations={() => setIsInspirationsOpen(true)} 
+            onOpenAbout={() => setIsAboutOpen(true)} 
+          />
+        </>
+      )}
+
+      <style>{`
+        * { 
+          cursor: none; 
+          scroll-behavior: smooth; 
+        }
+        @media (max-width: 1024px) {
+          * { cursor: auto !important; }
+          .cursor-follow { display: none !important; }
+        }
+        body { 
+          background: ${theme.bg}; 
+          font-family: 'Space Grotesk', sans-serif; 
+          overflow-x: hidden; 
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .signature { font-family: 'Great Vibes', cursive; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .cursor-follow {
+          position: fixed;
+          width: 6px;
+          height: 6px;
+          background: ${theme.cursorColor};
+          pointer-events: none;
+          z-index: 9999;
+          box-shadow: 0 0 15px ${theme.cursorColor};
+          transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: ${theme.bg}; }
+        ::-webkit-scrollbar-thumb { background: ${theme.cursorColor}; }
+      `}</style>
+      
+      <CursorFollower />
+    </div>
   );
 };
 
