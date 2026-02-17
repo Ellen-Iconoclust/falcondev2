@@ -77,17 +77,7 @@ const AboutModal = ({ isOpen, onClose }) => {
           className="fixed inset-0 z-[200] bg-white overflow-y-auto"
         >
           <div className="min-h-screen w-full relative">
-            {/* Navigation */}
-            <div className="fixed top-8 left-8 z-30">
-              <button 
-                onClick={onClose}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-none text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:border-blue-600 transition-colors shadow-sm"
-              >
-                <Home size={14} />
-                <span>Back to Home</span>
-              </button>
-            </div>
-
+            {/* Only X button - no Back to Home */}
             <button 
               onClick={onClose}
               className="fixed top-8 right-8 z-30 w-10 h-10 rounded-none bg-white border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"
