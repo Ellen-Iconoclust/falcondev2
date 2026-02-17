@@ -346,6 +346,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     return scrollY.onChange((latest) => setIsScrolled(latest > 50));
@@ -353,56 +354,156 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   const isExpanded = !isScrolled || isHovered;
 
+  // Close mobile menu when clicking a link
+  const handleLinkClick = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
-    <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
-      <motion.nav 
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        initial={false}
-        animate={{
-          width: isExpanded ? "min(650px, 90vw)" : "160px",
-          paddingLeft: isExpanded ? "24px" : "16px",
-          paddingRight: isExpanded ? "24px" : "16px",
-          backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(248, 250, 252, 0.85)",
-          boxShadow: isScrolled ? "0 20px 40px rgba(0,0,0,0.08)" : "0 4px 20px rgba(0,0,0,0.01)",
-          borderColor: isScrolled ? "rgba(37, 99, 235, 0.4)" : "rgba(15, 23, 42, 0.2)"
-        }}
-        transition={{ type: "spring", stiffness: 350, damping: 35 }}
-        className="pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl flex items-center justify-center overflow-hidden"
-      >
-        <AnimatePresence mode="wait">
-          {isExpanded ? (
+    <>
+      {/* Desktop Navbar */}
+      <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
+        <motion.nav 
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          initial={false}
+          animate={{
+            width: isExpanded ? "min(650px, 90vw)" : "160px",
+            paddingLeft: isExpanded ? "24px" : "16px",
+            paddingRight: isExpanded ? "24px" : "16px",
+            backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(248, 250, 252, 0.85)",
+            boxShadow: isScrolled ? "0 20px 40px rgba(0,0,0,0.08)" : "0 4px 20px rgba(0,0,0,0.01)",
+            borderColor: isScrolled ? "rgba(37, 99, 235, 0.4)" : "rgba(15, 23, 42, 0.2)"
+          }}
+          transition={{ type: "spring", stiffness: 350, damping: 35 }}
+          className="pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl items-center justify-center overflow-hidden hidden md:flex"
+        >
+          <AnimatePresence mode="wait">
+            {isExpanded ? (
+              <motion.div 
+                key="full-nav"
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 5 }}
+                className="flex items-center justify-between w-full"
+              >
+                <div className="flex items-center gap-4 md:gap-8">
+                  {['Work', 'Protocol', 'Root'].map((item) => (
+                    <a key={item} href={`#${item.toLowerCase() === 'work' ? 'repositories' : item.toLowerCase()}`} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">{item}</a>
+                  ))}
+                  <button onClick={onOpenInspirations} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">Inspirations</button>
+                </div>
+                <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-6 hover:text-blue-600 transition-colors">Admin</button>
+              </motion.div>
+            ) : (
+              <motion.button 
+                key="shrunk-nav"
+                onClick={onOpenAbout}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="flex items-center gap-3 md:gap-4 whitespace-nowrap"
+              >
+                <div className="w-1.5 h-1.5 bg-blue-600 shadow-[0_0_15px_#2563eb]" />
+                <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] font-bold text-slate-900 font-mono">SYS.LIVE</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </motion.nav>
+      </div>
+
+      {/* Mobile Navbar */}
+      <div className="fixed top-0 left-0 right-0 z-[100] md:hidden">
+        <div className="flex items-center justify-between px-4 py-4 bg-white/95 backdrop-blur-md border-b border-slate-200">
+          {/* Left side - Name */}
+          <button 
+            onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+            className="text-lg font-bold text-slate-900 font-mono tracking-tight"
+          >
+            Ellen
+          </button>
+
+          {/* Right side - Hamburger Icon */}
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="w-10 h-10 flex flex-col items-center justify-center gap-1.5 bg-slate-100 rounded-md hover:bg-blue-600 group transition-colors"
+          >
+            <span className={`w-5 h-0.5 bg-slate-600 group-hover:bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`w-5 h-0.5 bg-slate-600 group-hover:bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+            <span className={`w-5 h-0.5 bg-slate-600 group-hover:bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+          </button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
             <motion.div 
-              key="full-nav"
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 5 }}
-              className="flex items-center justify-between w-full"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-[72px] left-0 right-0 bg-white border-b border-slate-200 shadow-lg"
             >
-              <div className="flex items-center gap-4 md:gap-8">
-                {['Work', 'Protocol', 'Root'].map((item) => (
-                  <a key={item} href={`#${item.toLowerCase() === 'work' ? 'repositories' : item.toLowerCase()}`} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">{item}</a>
-                ))}
-                <button onClick={onOpenInspirations} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">Inspirations</button>
+              <div className="flex flex-col p-4 gap-2">
+                <a 
+                  href="#repositories" 
+                  onClick={handleLinkClick}
+                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
+                >
+                  Work
+                </a>
+                <a 
+                  href="#protocol" 
+                  onClick={handleLinkClick}
+                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
+                >
+                  Protocol
+                </a>
+                <a 
+                  href="#root" 
+                  onClick={handleLinkClick}
+                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
+                >
+                  Root
+                </a>
+                <button 
+                  onClick={() => {
+                    onOpenInspirations();
+                    handleLinkClick();
+                  }}
+                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors text-left"
+                >
+                  Inspirations
+                </button>
+                <div className="border-t border-slate-100 my-2"></div>
+                <button 
+                  onClick={() => {
+                    onOpenAbout();
+                    handleLinkClick();
+                  }}
+                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-blue-600 hover:text-white hover:bg-blue-600 rounded-md transition-colors text-left"
+                >
+                  Admin
+                </button>
               </div>
-              <button onClick={onOpenAbout} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-900 border-l border-slate-200 pl-4 md:pl-6 hover:text-blue-600 transition-colors">Admin</button>
             </motion.div>
-          ) : (
-            <motion.button 
-              key="shrunk-nav"
-              onClick={onOpenAbout}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="flex items-center gap-3 md:gap-4 whitespace-nowrap"
-            >
-              <div className="w-1.5 h-1.5 bg-blue-600 shadow-[0_0_15px_#2563eb]" />
-              <span className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] font-bold text-slate-900 font-mono">SYS.LIVE</span>
-            </motion.button>
           )}
         </AnimatePresence>
-      </motion.nav>
-    </div>
+      </div>
+
+      {/* Overlay for mobile menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/20 z-[90] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
