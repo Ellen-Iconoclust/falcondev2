@@ -198,14 +198,14 @@ const InspirationsModal = ({ isOpen, onClose }) => {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[200] flex items-start justify-center bg-white overflow-hidden"
         >
-          <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-12 scrollbar-hide">
-            <div className="max-w-4xl mx-auto min-h-full">
+          <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-16 scrollbar-hide">
+            <div className="max-w-4xl mx-auto">
               <div className="mb-20 md:mb-32">
                 <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-slate-900 mb-6">ARCHETYPES</h2>
                 <p className="text-slate-400 font-mono text-xs uppercase tracking-widest">Architects of the modern intellectual landscape.</p>
               </div>
 
-              <div className="relative pb-[50vh]">
+              <div className="relative" style={{ height: `${figures.length * 120}vh` }}>
                 {figures.map((figure, idx) => (
                   <InspirationCard key={figure.name} figure={figure} index={idx} total={figures.length} />
                 ))}
@@ -235,13 +235,33 @@ const InspirationCard = ({ figure, index, total }) => {
     offset: ["start end", "end start"]
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [0.3, 1]);
+  // Calculate the scroll range for each card
+  const start = index / total;
+  const end = (index + 1) / total;
+
+  // Scale: start small, become full size, then stay full
+  const scale = useTransform(
+    scrollYProgress, 
+    [start, start + 0.15, end - 0.15, end], 
+    [0.7, 1, 1, 0.7]
+  );
+
+  // Opacity: fade in, stay visible, fade out
+  const opacity = useTransform(
+    scrollYProgress, 
+    [start, start + 0.1, end - 0.1, end], 
+    [0, 1, 1, 0]
+  );
+
+  // Y position: slide up smoothly
   const y = useTransform(
     scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
-    [100, 0, 0, -50]
+    [start, end], 
+    [100, -100]
   );
+
+  // Calculate sticky top position with proper spacing
+  const topPosition = 10 + (index * 3); // Progressive stacking
 
   return (
     <motion.div 
@@ -250,11 +270,11 @@ const InspirationCard = ({ figure, index, total }) => {
         scale, 
         opacity,
         y,
-        zIndex: index,
+        zIndex: total - index, // Higher index = lower z-index (so newer cards are on top)
         position: 'sticky',
-        top: `${15 + index * 2}vh`,
+        top: `${topPosition}vh`,
       }}
-      className={`w-full min-h-[400px] md:min-h-[500px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden mb-8`}
+      className={`absolute w-full min-h-[450px] md:min-h-[550px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden`}
     >
       <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
         <Lightbulb size={200} strokeWidth={1} />
