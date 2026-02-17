@@ -74,78 +74,134 @@ const AboutModal = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center p-2 md:p-10 bg-slate-50/95 backdrop-blur-3xl overflow-y-auto"
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-slate-50/95 backdrop-blur-3xl overflow-y-auto"
         >
           <motion.div 
             initial={{ scale: 0.95, y: 40, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 0.95, y: 40, opacity: 0 }}
-            className="relative w-full max-w-7xl min-h-[90vh] bg-white border border-blue-100 rounded-xl p-6 md:p-16 my-4 shadow-2xl"
+            className="relative w-full max-w-6xl bg-white border border-blue-100 rounded-xl p-6 md:p-8 my-4 shadow-2xl"
           >
-            <div className="flex justify-between items-center mb-8 md:mb-16">
-              <button 
-                onClick={onClose}
-                className="flex items-center gap-3 px-4 md:px-6 py-2 rounded-md bg-slate-50 border border-slate-200 hover:bg-blue-50 transition-colors text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-slate-900"
-              >
-                <Home size={14} className="text-blue-600" />
-                <span className="hidden xs:inline">Root Terminal</span>
-              </button>
-              
-              <button 
-                onClick={onClose}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
-              >
-                <X size={20} />
-              </button>
-            </div>
+            {/* Back to Home button - only one navigation button */}
+            <button 
+              onClick={onClose}
+              className="absolute top-6 left-6 z-10 flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] font-bold text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              <Home size={14} />
+              <span>Back to Home</span>
+            </button>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="md:col-span-3 bg-slate-900 rounded-lg p-6 md:p-10 flex flex-col justify-end min-h-[300px]">
-                <h2 className="text-4xl md:text-7xl font-bold tracking-tighter mb-4 md:mb-6 text-white leading-none">The Engineering of <br/><span className="text-blue-500 font-mono">Ellen.sys</span></h2>
-                <p className="text-slate-400 text-sm md:text-lg max-w-xl font-light leading-relaxed">Developing high-performance digital ecosystems through algorithmic precision. Optimized in Tamil Nadu for global scale.</p>
-              </div>
+            {/* Close button - only visible on mobile or as secondary */}
+            <button 
+              onClick={onClose}
+              className="absolute top-6 right-6 w-8 h-8 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all md:hidden"
+            >
+              <X size={16} />
+            </button>
 
-              <div className="md:col-span-1 bg-blue-50 border border-blue-100 rounded-lg p-6 md:p-8 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-lg bg-white flex items-center justify-center mb-4 shadow-sm border border-blue-200">
-                  <Globe className="text-blue-600" />
-                </div>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-slate-400 mb-1 font-bold">Node Location</span>
-                <span className="font-mono text-lg md:text-xl text-slate-900">11.01°N, 76.95°E</span>
-              </div>
-
-              <div className="md:col-span-2 bg-white border border-slate-100 rounded-lg p-6 md:p-10 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <Terminal size={18} className="text-blue-600" />
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">Environment Variables</h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow'].map(s => (
-                    <span key={s} className="px-3 py-1.5 rounded-sm bg-slate-900 text-white text-[9px] font-mono tracking-tighter">{s}</span>
-                  ))}
+            {/* Grid Layout - matching reference structure */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-16 md:mt-12">
+              {/* div1: Photo/Engineering section (spans 1 column, 2 rows on desktop) */}
+              <div className="md:col-span-1 md:row-span-2 bg-slate-900 rounded-xl overflow-hidden group min-h-[300px] md:min-h-0 relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800" 
+                  className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                  alt="Ellen"
+                />
+                <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-slate-900 to-transparent w-full">
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">Ellen.sys</h2>
+                  <p className="text-blue-400 text-[8px] uppercase tracking-widest font-mono">v6.0.0 // ENGINEERING</p>
                 </div>
               </div>
 
-              <div className="md:col-span-1 bg-blue-600 rounded-lg p-6 md:p-10 flex flex-col justify-between">
-                <Zap className="text-white mb-6" />
+              {/* div2: Manifesto/About Text (spans 2 columns) */}
+              <div className="md:col-span-2 bg-white border border-slate-100 rounded-xl p-6 md:p-8 flex flex-col justify-center">
+                <span className="text-[8px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-3">Manifesto</span>
+                <p className="text-xs md:text-sm font-medium tracking-wide leading-relaxed text-slate-600">
+                  Developing high-performance digital ecosystems through algorithmic precision. 
+                  Specializing in crafting experiences that harmonize complex architectural logic 
+                  with minimalist, high-fidelity aesthetics. Optimized in Tamil Nadu for global scale.
+                </p>
+              </div>
+
+              {/* div3: Location/Node Info */}
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 flex flex-col items-start justify-center">
+                <Globe size={18} className="text-blue-600 mb-3" />
+                <span className="text-[8px] uppercase tracking-[0.2em] text-slate-400 mb-1 font-bold">Node Location</span>
+                <span className="font-mono text-base md:text-lg text-slate-900">11.01°N, 76.95°E</span>
+              </div>
+
+              {/* div4: Build Version */}
+              <div className="bg-blue-600 rounded-xl p-6 flex flex-col justify-between">
+                <Zap className="text-white/80" size={20} />
                 <div>
-                  <div className="text-4xl md:text-5xl font-bold text-white tracking-tighter">6.0.0</div>
-                  <div className="text-[9px] uppercase tracking-[0.2em] text-white/60 font-bold">Build Version (Years)</div>
+                  <div className="text-2xl md:text-3xl font-bold text-white tracking-tighter">6.0.0</div>
+                  <div className="text-[7px] uppercase tracking-[0.2em] text-white/60 font-bold">Build Version</div>
                 </div>
               </div>
 
-              <div className="md:col-span-1 bg-slate-50 border border-slate-100 rounded-lg p-6 md:p-8 flex flex-col justify-between font-mono text-slate-400">
-                <Code size={20} />
-                <p className="text-[10px] leading-relaxed uppercase">// code is poetry optimized for performance</p>
+              {/* div5: Tech Stack/Tools Carousel */}
+              <div className="md:col-span-2 bg-white border border-slate-100 rounded-xl p-6 overflow-hidden">
+                <div className="flex items-center gap-2 mb-4">
+                  <Terminal size={14} className="text-blue-600" />
+                  <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400">Daily Stack</span>
+                </div>
+                <div className="overflow-hidden relative">
+                  <div className="flex gap-6 animate-scroll whitespace-nowrap">
+                    {/* First set */}
+                    {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
+                      <span key={s} className="inline-block px-3 py-1.5 rounded-full bg-slate-900 text-white text-[8px] font-mono tracking-tighter whitespace-nowrap">{s}</span>
+                    ))}
+                    {/* Duplicate for seamless loop */}
+                    {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
+                      <span key={`${s}-2`} className="inline-block px-3 py-1.5 rounded-full bg-slate-900 text-white text-[8px] font-mono tracking-tighter whitespace-nowrap">{s}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="md:col-span-4 bg-slate-900 rounded-lg p-6 md:p-10 flex flex-col md:flex-row gap-6 justify-between items-center text-white">
-                <span className="text-blue-400 font-mono text-sm md:text-xl text-center md:text-left">System active. Seeking collaborative protocols.</span>
-                <div className="flex gap-4 w-full md:w-auto">
-                  <button onClick={onClose} className="flex-1 md:flex-none px-6 py-3 border border-slate-700 hover:border-blue-500 rounded-md text-[9px] uppercase tracking-[0.2em] font-bold transition-all">Abort</button>
-                  <MagneticButton className="flex-1 md:flex-none px-6 py-3 bg-blue-600 text-white rounded-md text-[9px] uppercase tracking-[0.2em] font-bold shadow-xl shadow-blue-600/20">Init Connect</MagneticButton>
-                </div>
+              {/* div6: Code Philosophy */}
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 flex flex-col justify-between">
+                <Code size={18} className="text-slate-400 mb-4" />
+                <p className="text-[9px] font-mono text-slate-500 leading-relaxed uppercase">// code is poetry<br/>optimized for performance</p>
+              </div>
+
+              {/* div7: Inspirations/Confetti Trigger */}
+              <div className="bg-slate-900 rounded-xl p-6 flex items-center justify-center cursor-pointer group hover:bg-blue-600 transition-all duration-300" onClick={() => {
+                // Add confetti or any action here
+                console.log('Trigger action');
+              }}>
+                <span className="text-white text-xs md:text-sm font-bold uppercase tracking-[0.2em] group-hover:tracking-[0.3em] transition-all">Click Me</span>
+              </div>
+
+              {/* div8: System Status */}
+              <div className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 rounded-xl p-4 flex items-center justify-between">
+                <span className="text-blue-400 font-mono text-xs flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  System active. Seeking collaborative protocols.
+                </span>
+                <MagneticButton 
+                  onClick={onClose}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-md text-[8px] uppercase tracking-[0.2em] font-bold transition-all"
+                >
+                  Init Connect
+                </MagneticButton>
               </div>
             </div>
+
+            <style jsx>{`
+              @keyframes scroll {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+              }
+              .animate-scroll {
+                animation: scroll 20s linear infinite;
+                width: fit-content;
+              }
+              .animate-scroll:hover {
+                animation-play-state: paused;
+              }
+            `}</style>
           </motion.div>
         </motion.div>
       )}
