@@ -205,7 +205,7 @@ const InspirationsModal = ({ isOpen, onClose }) => {
                 <p className="text-slate-400 font-mono text-xs uppercase tracking-widest">Architects of the modern intellectual landscape.</p>
               </div>
 
-              <div className="relative" style={{ height: `${figures.length * 120}vh` }}>
+              <div className="space-y-[15vh] md:space-y-[20vh] pb-[30vh]">
                 {figures.map((figure, idx) => (
                   <InspirationCard key={figure.name} figure={figure} index={idx} total={figures.length} />
                 ))}
@@ -235,33 +235,26 @@ const InspirationCard = ({ figure, index, total }) => {
     offset: ["start end", "end start"]
   });
 
-  // Calculate the scroll range for each card
-  const start = index / total;
-  const end = (index + 1) / total;
-
-  // Scale: start small, become full size, then stay full
+  // Scale: start at 0.9, reach 1, then stay at 1
   const scale = useTransform(
     scrollYProgress, 
-    [start, start + 0.15, end - 0.15, end], 
-    [0.7, 1, 1, 0.7]
+    [0, 0.2, 0.8], 
+    [0.9, 1, 1]
   );
 
-  // Opacity: fade in, stay visible, fade out
+  // Opacity: start at 0.5, become fully visible, stay visible
   const opacity = useTransform(
     scrollYProgress, 
-    [start, start + 0.1, end - 0.1, end], 
-    [0, 1, 1, 0]
+    [0, 0.2, 0.9], 
+    [0.5, 1, 1]
   );
 
-  // Y position: slide up smoothly
+  // Y position: slight upward movement
   const y = useTransform(
     scrollYProgress, 
-    [start, end], 
-    [100, -100]
+    [0, 1], 
+    [50, -50]
   );
-
-  // Calculate sticky top position with proper spacing
-  const topPosition = 10 + (index * 3); // Progressive stacking
 
   return (
     <motion.div 
@@ -270,11 +263,10 @@ const InspirationCard = ({ figure, index, total }) => {
         scale, 
         opacity,
         y,
-        zIndex: total - index, // Higher index = lower z-index (so newer cards are on top)
         position: 'sticky',
-        top: `${topPosition}vh`,
+        top: '10vh',
       }}
-      className={`absolute w-full min-h-[450px] md:min-h-[550px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden`}
+      className={`w-full min-h-[400px] md:min-h-[500px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden`}
     >
       <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
         <Lightbulb size={200} strokeWidth={1} />
