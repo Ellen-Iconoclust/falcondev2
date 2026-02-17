@@ -361,7 +361,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   return (
     <>
-      {/* Desktop Navbar */}
+      {/* Desktop Navbar - unchanged */}
       <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
         <motion.nav 
           onMouseEnter={() => setIsHovered(true)}
@@ -412,25 +412,25 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </motion.nav>
       </div>
 
-      {/* Mobile Navbar */}
-      <div className="fixed top-0 left-0 right-0 z-[100] md:hidden">
-        <div className="flex items-center justify-between px-4 py-4 bg-white/95 backdrop-blur-md border-b border-slate-200">
-          {/* Left side - Name */}
+      {/* Mobile Navbar - Small and centered */}
+      <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 md:hidden">
+        <div className="flex items-center justify-between w-auto min-w-[200px] px-4 py-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-sm shadow-sm">
+          {/* Name */}
           <button 
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
-            className="text-lg font-bold text-slate-900 font-mono tracking-tight"
+            className="text-sm font-bold text-slate-900 font-mono tracking-tight mr-4"
           >
             Ellen
           </button>
 
-          {/* Right side - Hamburger Icon */}
+          {/* Menu Icon */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="w-10 h-10 flex flex-col items-center justify-center gap-1.5 bg-slate-100 rounded-md hover:bg-blue-600 group transition-colors"
+            className="w-8 h-8 flex flex-col items-center justify-center gap-1 hover:bg-slate-100 rounded-sm transition-colors"
           >
-            <span className={`w-5 h-0.5 bg-slate-600 group-hover:bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-            <span className={`w-5 h-0.5 bg-slate-600 group-hover:bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-            <span className={`w-5 h-0.5 bg-slate-600 group-hover:bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+            <span className={`w-4 h-0.5 bg-slate-600 transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+            <span className={`w-4 h-0.5 bg-slate-600 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
+            <span className={`w-4 h-0.5 bg-slate-600 transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
           </button>
         </div>
 
@@ -438,31 +438,31 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-[72px] left-0 right-0 bg-white border-b border-slate-200 shadow-lg"
+              className="absolute top-[52px] left-1/2 -translate-x-1/2 w-[200px] bg-white border border-slate-200 shadow-lg rounded-sm"
             >
-              <div className="flex flex-col p-4 gap-2">
+              <div className="flex flex-col p-2">
                 <a 
                   href="#repositories" 
                   onClick={handleLinkClick}
-                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
+                  className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
                 >
                   Work
                 </a>
                 <a 
                   href="#protocol" 
                   onClick={handleLinkClick}
-                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
+                  className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
                 >
                   Protocol
                 </a>
                 <a 
                   href="#root" 
                   onClick={handleLinkClick}
-                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
+                  className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
                 >
                   Root
                 </a>
@@ -471,19 +471,19 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                     onOpenInspirations();
                     handleLinkClick();
                   }}
-                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors text-left"
+                  className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
                 >
                   Inspirations
                 </button>
-                <div className="border-t border-slate-100 my-2"></div>
+                <div className="border-t border-slate-100 my-1"></div>
                 <button 
                   onClick={() => {
                     onOpenAbout();
                     handleLinkClick();
                   }}
-                  className="px-4 py-3 text-[11px] uppercase tracking-[0.2em] font-bold text-blue-600 hover:text-white hover:bg-blue-600 rounded-md transition-colors text-left"
+                  className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
                 >
-                  Admin
+                  About
                 </button>
               </div>
             </motion.div>
