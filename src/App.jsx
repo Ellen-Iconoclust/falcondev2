@@ -78,10 +78,10 @@ const AboutModal = ({ isOpen, onClose }) => {
         >
           <div className="min-h-screen w-full relative">
             {/* Navigation */}
-            <div className="fixed top-6 left-6 z-30">
+            <div className="fixed top-8 left-8 z-30">
               <button 
                 onClick={onClose}
-                className="flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-md text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 transition-colors shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-none text-[9px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:border-blue-600 transition-colors shadow-sm"
               >
                 <Home size={14} />
                 <span>Back to Home</span>
@@ -90,32 +90,32 @@ const AboutModal = ({ isOpen, onClose }) => {
 
             <button 
               onClick={onClose}
-              className="fixed top-6 right-6 z-30 w-10 h-10 rounded-md bg-white/90 backdrop-blur-sm border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+              className="fixed top-8 right-8 z-30 w-10 h-10 rounded-none bg-white border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"
             >
               <X size={18} />
             </button>
 
             {/* Main Content */}
-            <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-24 md:py-32">
-              {/* Grid Layout - matching reference structure */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 auto-rows-auto">
+            <div className="w-full max-w-7xl mx-auto px-8 md:px-10 py-28 md:py-36">
+              {/* Grid Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-auto">
                 {/* div1: Photo - spans 1 column, 2 rows on desktop */}
-                <div className="md:col-span-1 md:row-span-2 bg-slate-900 rounded-2xl overflow-hidden group h-[300px] md:h-[400px] relative">
+                <div className="md:col-span-1 md:row-span-2 bg-slate-900 overflow-hidden group h-[350px] md:h-[500px] relative border border-slate-800">
                   <img 
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800" 
                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
                     alt="Ellen"
                   />
-                  <div className="absolute bottom-0 left-0 p-6 md:p-8 bg-gradient-to-t from-slate-900 to-transparent w-full">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-1">Ellen.sys</h2>
-                    <p className="text-blue-400 text-[8px] md:text-[9px] uppercase tracking-widest font-mono">v6.0.0 // ENGINEERING</p>
+                  <div className="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-slate-900 to-transparent w-full">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">Ellen.sys</h2>
+                    <p className="text-blue-400 text-[9px] uppercase tracking-widest font-mono">v6.0.0 // ENGINEERING</p>
                   </div>
                 </div>
 
                 {/* div2: Manifesto - spans 2 columns */}
-                <div className="md:col-span-2 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 flex flex-col justify-center min-h-[180px]">
-                  <span className="text-[8px] md:text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-3">Manifesto</span>
-                  <p className="text-sm md:text-base font-medium tracking-wide leading-relaxed text-slate-600">
+                <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-center min-h-[220px]">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-4">Manifesto</span>
+                  <p className="text-base md:text-lg font-medium tracking-wide leading-relaxed text-slate-700">
                     Developing high-performance digital ecosystems through algorithmic precision. 
                     Specializing in crafting experiences that harmonize complex architectural logic 
                     with minimalist, high-fidelity aesthetics. Optimized in Tamil Nadu for global scale.
@@ -123,56 +123,56 @@ const AboutModal = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* div3: Location */}
-                <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 md:p-8 flex flex-col items-start justify-center min-h-[140px]">
-                  <Globe size={20} className="text-blue-600 mb-3" />
-                  <span className="text-[7px] md:text-[8px] uppercase tracking-[0.2em] text-slate-400 mb-1 font-bold">Node Location</span>
-                  <span className="font-mono text-base md:text-lg text-slate-900">11.01°N, 76.95°E</span>
+                <div className="bg-blue-50 border-2 border-blue-200 p-8 md:p-10 flex flex-col items-start justify-center min-h-[180px]">
+                  <Globe size={24} className="text-blue-600 mb-4" />
+                  <span className="text-[8px] uppercase tracking-[0.2em] text-slate-500 mb-1.5 font-bold">Node Location</span>
+                  <span className="font-mono text-lg md:text-xl text-slate-900">11.01°N, 76.95°E</span>
                 </div>
 
                 {/* div4: Build Version */}
-                <div className="bg-blue-600 rounded-2xl p-6 md:p-8 flex flex-col justify-between min-h-[140px]">
-                  <Zap className="text-white/80" size={24} />
+                <div className="bg-blue-600 border-2 border-blue-700 p-8 md:p-10 flex flex-col justify-between min-h-[180px]">
+                  <Zap className="text-white/90" size={28} />
                   <div>
-                    <div className="text-2xl md:text-3xl font-bold text-white tracking-tighter">6.0.0</div>
-                    <div className="text-[7px] md:text-[8px] uppercase tracking-[0.2em] text-white/60 font-bold">Build Version</div>
+                    <div className="text-3xl md:text-4xl font-bold text-white tracking-tighter">6.0.0</div>
+                    <div className="text-[8px] uppercase tracking-[0.2em] text-white/70 font-bold">Build Version (Years)</div>
                   </div>
                 </div>
 
                 {/* div5: Tech Stack/Tools Carousel */}
-                <div className="md:col-span-2 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 overflow-hidden min-h-[140px]">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Terminal size={16} className="text-blue-600" />
-                    <span className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Daily Stack</span>
+                <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 overflow-hidden min-h-[180px]">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Terminal size={18} className="text-blue-600" />
+                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">Daily Stack</span>
                   </div>
                   <div className="overflow-hidden relative">
                     <div className="flex gap-3 animate-scroll whitespace-nowrap">
                       {/* First set */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
-                        <span key={s} className="inline-block px-3 py-1.5 rounded-full bg-slate-900 text-white text-[8px] md:text-[9px] font-mono tracking-tighter whitespace-nowrap">{s}</span>
+                        <span key={s} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
                       {/* Duplicate for seamless loop */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
-                        <span key={`${s}-2`} className="inline-block px-3 py-1.5 rounded-full bg-slate-900 text-white text-[8px] md:text-[9px] font-mono tracking-tighter whitespace-nowrap">{s}</span>
+                        <span key={`${s}-2`} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
                     </div>
                   </div>
                 </div>
 
                 {/* div6: Code Philosophy */}
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 md:p-8 flex flex-col justify-between min-h-[140px]">
-                  <Code size={20} className="text-slate-400" />
-                  <p className="text-[9px] md:text-[10px] font-mono text-slate-500 leading-relaxed uppercase">// code is poetry<br/>optimized for performance</p>
+                <div className="bg-slate-50 border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-between min-h-[180px]">
+                  <Code size={24} className="text-slate-500" />
+                  <p className="text-[10px] md:text-xs font-mono text-slate-600 leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
                 </div>
 
                 {/* div7: System Status - spans full width */}
-                <div className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 rounded-2xl p-4 md:p-5 flex items-center justify-between">
-                  <span className="text-blue-400 font-mono text-xs md:text-sm flex items-center gap-2">
-                    <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                <div className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 border-2 border-slate-700 p-5 md:p-6 flex items-center justify-between">
+                  <span className="text-blue-400 font-mono text-sm md:text-base flex items-center gap-3">
+                    <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
                     System active. Seeking collaborative protocols.
                   </span>
                   <MagneticButton 
                     onClick={onClose}
-                    className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-md text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold transition-all"
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-none text-[9px] uppercase tracking-[0.2em] font-bold transition-all border border-white/20 hover:border-white/40"
                   >
                     Initiate Connection
                   </MagneticButton>
@@ -186,7 +186,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                 100% { transform: translateX(-50%); }
               }
               .animate-scroll {
-                animation: scroll 20s linear infinite;
+                animation: scroll 25s linear infinite;
                 width: fit-content;
               }
               .animate-scroll:hover {
