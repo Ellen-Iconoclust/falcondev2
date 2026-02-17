@@ -513,10 +513,15 @@ const Hero = () => {
   const spotlightY = useSpring(mouseY, { stiffness: 100, damping: 20 });
 
   return (
-    <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-20">
+    <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-0 md:pt-20">
+      {/* Subtle blue blur blob - always visible */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-blue-600/10 rounded-full blur-[80px] md:blur-[160px] z-0" />
+      
+      {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
         style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
 
+      {/* Mouse-following blobs - desktop only */}
       <motion.div 
         style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
         className="pointer-events-none absolute w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-blue-600/20 rounded-full blur-[120px] md:blur-[160px] z-0 hidden md:block"
@@ -526,19 +531,19 @@ const Hero = () => {
         className="pointer-events-none absolute w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-blue-400/30 rounded-full blur-[60px] md:blur-[100px] z-0 hidden md:block"
       />
 
-      <div className="relative z-10 max-w-7xl">
+      <div className="relative z-10 max-w-7xl mt-[-5vh] md:mt-0">
         <motion.div
            initial={{ opacity: 0, scale: 0.9 }}
            animate={{ opacity: 1, scale: 1 }}
            transition={{ duration: 1 }}
-           className="mb-10 md:mb-14"
+           className="mb-6 md:mb-14"
         >
           <span className="px-4 md:px-8 py-2 md:py-3 bg-slate-900 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-blue-400 font-bold font-mono">
             &lt; DEV_PORTFOLIO /&gt; V2.6
           </span>
         </motion.div>
 
-        <h1 className="text-[14vw] md:text-[11vw] font-bold leading-[0.8] tracking-tighter mb-8 md:mb-14 text-slate-900">
+        <h1 className="text-[14vw] md:text-[11vw] font-bold leading-[0.8] tracking-tighter mb-4 md:mb-14 text-slate-900">
           <div className="overflow-hidden py-1">
             <motion.span 
               initial={{ y: "110%" }} 
