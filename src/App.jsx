@@ -305,25 +305,25 @@ const InspirationCard = ({ figure, index, total }) => {
     offset: ["start end", "end start"]
   });
 
-  // Scale: start at 0.9, reach 1, then stay at 1
+  // Scale: start at 0.95, reach 1, then stay at 1
   const scale = useTransform(
     scrollYProgress, 
-    [0, 0.2, 0.8], 
-    [0.9, 1, 1]
+    [0, 0.2, 0.8, 1], 
+    [0.95, 1, 1, 0.95]
   );
 
-  // Opacity: start at 0.5, become fully visible, stay visible
-  const opacity = useTransform(
-    scrollYProgress, 
-    [0, 0.2, 0.9], 
-    [0.5, 1, 1]
-  );
-
-  // Y position: slight upward movement
+  // Y position: slight movement
   const y = useTransform(
     scrollYProgress, 
-    [0, 1], 
-    [50, -50]
+    [0, 0.5, 1], 
+    [30, 0, -30]
+  );
+
+  // Subtle opacity change - never go below 0.9
+  const opacity = useTransform(
+    scrollYProgress, 
+    [0, 0.2, 0.8, 1], 
+    [0.9, 1, 1, 0.9]
   );
 
   return (
@@ -365,7 +365,6 @@ const InspirationCard = ({ figure, index, total }) => {
     </motion.div>
   );
 };
-
 const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
