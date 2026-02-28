@@ -17,15 +17,6 @@ import {
   Lightbulb
 } from 'lucide-react';
 
-// --- GSAP & Lenis ---
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from '@studio-freight/lenis';
-
-// --- Three.js ---
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, TorusKnot, Sphere, MeshDistortMaterial } from '@react-three/drei';
-
 // --- Custom Hooks ---
 
 const useMousePosition = () => {
@@ -55,6 +46,7 @@ const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime =
       const currentWord = words[wordIndex];
       
       if (!isDeleting && text === currentWord) {
+        // Pause at the end of typing
         setTimeout(() => setIsDeleting(true), pauseTime);
         return;
       }
@@ -120,6 +112,7 @@ const AboutModal = ({ isOpen, onClose }) => {
           className="fixed inset-0 z-[200] bg-white overflow-y-auto"
         >
           <div className="min-h-screen w-full relative">
+            {/* Only X button - no Back to Home */}
             <button 
               onClick={onClose}
               className="fixed top-8 right-8 z-30 w-10 h-10 rounded-none bg-white border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"
@@ -127,8 +120,11 @@ const AboutModal = ({ isOpen, onClose }) => {
               <X size={18} />
             </button>
 
+            {/* Main Content */}
             <div className="w-full max-w-7xl mx-auto px-8 md:px-10 py-28 md:py-36">
+              {/* Grid Layout */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-auto">
+                {/* div1: Photo - spans 1 column, 2 rows on desktop */}
                 <div className="md:col-span-1 md:row-span-2 bg-slate-900 overflow-hidden group h-[350px] md:h-[500px] relative border border-slate-800">
                   <img 
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800" 
@@ -141,6 +137,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
+                {/* div2: Manifesto - spans 2 columns */}
                 <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-center min-h-[220px]">
                   <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-4">Manifesto</span>
                   <p className="text-base md:text-lg font-medium tracking-wide leading-relaxed text-slate-700">
@@ -150,12 +147,14 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </p>
                 </div>
 
+                {/* div3: Location */}
                 <div className="bg-blue-50 border-2 border-blue-200 p-8 md:p-10 flex flex-col items-start justify-center min-h-[180px]">
                   <Globe size={24} className="text-blue-600 mb-4" />
                   <span className="text-[8px] uppercase tracking-[0.2em] text-slate-500 mb-1.5 font-bold">Node Location</span>
                   <span className="font-mono text-lg md:text-xl text-slate-900">11.01°N, 76.95°E</span>
                 </div>
 
+                {/* div4: Build Version */}
                 <div className="bg-blue-600 border-2 border-blue-700 p-8 md:p-10 flex flex-col justify-between min-h-[180px]">
                   <Zap className="text-white/90" size={28} />
                   <div>
@@ -164,6 +163,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
+                {/* div5: Tech Stack/Tools Carousel */}
                 <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 overflow-hidden min-h-[180px]">
                   <div className="flex items-center gap-2 mb-6">
                     <Terminal size={18} className="text-blue-600" />
@@ -171,9 +171,11 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                   <div className="overflow-hidden relative">
                     <div className="flex gap-3 animate-scroll whitespace-nowrap">
+                      {/* First set */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                         <span key={s} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
+                      {/* Duplicate for seamless loop */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                         <span key={`${s}-2`} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
@@ -181,11 +183,13 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
+                {/* div6: Code Philosophy */}
                 <div className="bg-slate-50 border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-between min-h-[180px]">
                   <Code size={24} className="text-slate-500" />
                   <p className="text-[10px] md:text-xs font-mono text-slate-600 leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
                 </div>
 
+                {/* div7: System Status - spans full width */}
                 <div className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 border-2 border-slate-700 p-5 md:p-6 flex items-center justify-between">
                   <span className="text-blue-400 font-mono text-sm md:text-base flex items-center gap-3">
                     <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
@@ -220,7 +224,7 @@ const AboutModal = ({ isOpen, onClose }) => {
     </AnimatePresence>
   );
 };
-
+// --- Modal 2: Inspirations (Stacking Scroll) ---
 const InspirationsModal = ({ isOpen, onClose }) => {
   const figures = [
     {
@@ -278,6 +282,7 @@ const InspirationsModal = ({ isOpen, onClose }) => {
               </div>
             </div>
 
+            {/* Sticky controls */}
             <div className="fixed top-8 right-8 z-[210]">
               <button 
                 onClick={onClose}
@@ -300,18 +305,21 @@ const InspirationCard = ({ figure, index, total }) => {
     offset: ["start end", "end start"]
   });
 
+  // Scale: start at 0.95, reach 1, then stay at 1
   const scale = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
     [0.95, 1, 1, 0.95]
   );
 
+  // Y position: slight movement
   const y = useTransform(
     scrollYProgress, 
     [0, 0.5, 1], 
     [30, 0, -30]
   );
 
+  // Subtle opacity change - never go below 0.9
   const opacity = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
@@ -357,7 +365,6 @@ const InspirationCard = ({ figure, index, total }) => {
     </motion.div>
   );
 };
-
 const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -370,12 +377,14 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   const isExpanded = !isScrolled || isHovered;
 
+  // Close mobile menu when clicking a link
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
 
   return (
     <>
+      {/* Desktop Navbar - with "About" instead of "Admin" */}
       <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
         <motion.nav 
           onMouseEnter={() => setIsHovered(true)}
@@ -426,14 +435,18 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </motion.nav>
       </div>
 
+      {/* Mobile Navbar - Small and centered */}
       <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 md:hidden">
         <div className="flex items-center justify-between w-auto min-w-[200px] px-4 py-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-sm shadow-sm">
+          {/* Name */}
           <button 
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
             className="text-sm font-bold text-slate-900 font-mono tracking-tight mr-4"
           >
             Ellen
           </button>
+
+          {/* Menu Icon */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="w-8 h-8 flex flex-col items-center justify-center gap-1 hover:bg-slate-100 rounded-sm transition-colors"
@@ -444,6 +457,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
           </button>
         </div>
 
+        {/* Mobile Menu Dropdown */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -500,6 +514,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </AnimatePresence>
       </div>
 
+      {/* Overlay for mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
@@ -520,18 +535,23 @@ const Hero = ({ onOpenAbout }) => {
   const spotlightX = useSpring(mouseX, { stiffness: 100, damping: 20 });
   const spotlightY = useSpring(mouseY, { stiffness: 100, damping: 20 });
   
+  // Typewriter words
   const words = ["STABLE_LOGIC", "ZERO_LATENCY", "QUANTUM_CODING", "NEURAL_LINK", "EDGE_COMPUTE", "CLOUD_NATIVE", "DEEP_LEARN"];
   const typewriterText = useTypewriter(words, 120, 60, 2000);
 
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-0 md:pt-20">
+      {/* Top blue blur blob - mobile only, near navbar */}
       <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-blue-500/20 rounded-full blur-[60px] z-0 md:hidden" />
       
+      {/* Subtle blue blur blob - always visible */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-blue-600/10 rounded-full blur-[80px] md:blur-[160px] z-0" />
       
+      {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
         style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
 
+      {/* Mouse-following blobs - desktop only */}
       <motion.div 
         style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
         className="pointer-events-none absolute w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-blue-600/20 rounded-full blur-[120px] md:blur-[160px] z-0 hidden md:block"
@@ -622,6 +642,7 @@ const ProjectItem = ({ project, index }) => {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
       className="relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 border-slate-200 bg-white shadow-2xl shadow-blue-900/10 hover:border-blue-500 transition-colors duration-500"
     >
+      {/* Visual Outline Overlay */}
       <div className="absolute inset-2 border border-slate-100 pointer-events-none group-hover:border-blue-100 transition-colors duration-500" />
       
       <motion.div 
@@ -691,6 +712,7 @@ const PhilosophySection = ({ onOpenAbout }) => {
             <p className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
               Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
             </p>
+            {/* More About Me Button */}
             <motion.button
               onClick={onOpenAbout}
               initial={{ opacity: 0, y: 20 }}
@@ -795,32 +817,6 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   );
 };
 
-// --- 3D Background Component ---
-const ThreeDBackground = () => {
-  return (
-    <div className="fixed inset-0 pointer-events-none z-0 opacity-30">
-      <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <TorusKnot args={[1, 0.3, 128, 16]} scale={2.5}>
-          <MeshDistortMaterial
-            color="#2563eb"
-            attach="material"
-            distort={0.3}
-            speed={2}
-            roughness={0.2}
-            metalness={0.8}
-          />
-        </TorusKnot>
-        <Sphere args={[1.5, 64, 64]} position={[-3, -2, -5]}>
-          <meshStandardMaterial color="#3b82f6" wireframe emissive="#1e3a8a" />
-        </Sphere>
-        <OrbitControls enableZoom={false} enablePan={false} enableRotate autoRotate autoRotateSpeed={1} />
-      </Canvas>
-    </div>
-  );
-};
-
 const App = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
@@ -832,107 +828,10 @@ const App = () => {
     { title: "KINETIC", tags: ["Swift", "ThreeJS"], description: "Motion-sensitive architectural visualization using volumetric rendering." },
   ];
 
-  // --- GSAP & Lenis Smooth Scroll ---
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Initialize Lenis smooth scroll
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      smoothTouch: false,
-      touchMultiplier: 2,
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-
-    // Connect Lenis to ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-
-    gsap.ticker.lagSmoothing(0);
-
-    // --- ScrollTrigger animations for existing elements ---
-
-    // Hero section parallax
-    gsap.to('.hero-blob', {
-      scrollTrigger: {
-        trigger: 'section',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-      },
-      y: 200,
-      scale: 1.5,
-    });
-
-    // Project items: 3D tilt on scroll
-    gsap.utils.toArray('.project-item').forEach((item, i) => {
-      gsap.fromTo(item,
-        { rotationX: 10, rotationY: -10, transformPerspective: 1000 },
-        {
-          rotationX: -10,
-          rotationY: 10,
-          scrollTrigger: {
-            trigger: item,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        }
-      );
-    });
-
-    // Philosophy grid items: fade and scale
-    gsap.utils.toArray('.philosophy-grid-item').forEach((item, i) => {
-      gsap.fromTo(item,
-        { opacity: 0, scale: 0.8 },
-        {
-          opacity: 1,
-          scale: 1,
-          scrollTrigger: {
-            trigger: item,
-            start: 'top 80%',
-            end: 'bottom 20%',
-            scrub: true,
-            toggleActions: 'play reverse play reverse',
-          },
-        }
-      );
-    });
-
-    // Footer signature: floating animation
-    gsap.to('.signature', {
-      y: -10,
-      duration: 2,
-      repeat: -1,
-      yoyo: true,
-      ease: 'power1.inOut',
-    });
-
-    return () => {
-      lenis.destroy();
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
-  }, []);
-
   return (
     <div className="bg-white min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
       <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
       
-      {/* 3D Background */}
-      <ThreeDBackground />
-
       <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
@@ -950,9 +849,7 @@ const App = () => {
         
         <div className="space-y-[6vh] md:space-y-[10vh]">
           {projects.map((p, i) => (
-            <div key={p.title} className="project-item">
-              <ProjectItem project={p} index={i} />
-            </div>
+            <ProjectItem key={p.title} project={p} index={i} />
           ))}
         </div>
       </section>
