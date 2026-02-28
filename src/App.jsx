@@ -35,6 +35,41 @@ const useMousePosition = () => {
   return { mouseX, mouseY };
 };
 
+// --- Typewriter Hook ---
+const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime = 2000) => {
+  const [text, setText] = useState('');
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const currentWord = words[wordIndex];
+      
+      if (!isDeleting && text === currentWord) {
+        // Pause at the end of typing
+        setTimeout(() => setIsDeleting(true), pauseTime);
+        return;
+      }
+      
+      if (isDeleting && text === '') {
+        setIsDeleting(false);
+        setWordIndex((prev) => (prev + 1) % words.length);
+        return;
+      }
+      
+      const nextText = isDeleting 
+        ? currentWord.substring(0, text.length - 1)
+        : currentWord.substring(0, text.length + 1);
+      
+      setText(nextText);
+    }, isDeleting ? deletingSpeed : typingSpeed);
+
+    return () => clearTimeout(timer);
+  }, [text, wordIndex, isDeleting, words, typingSpeed, deletingSpeed, pauseTime]);
+
+  return text;
+};
+
 // --- Components ---
 
 const MagneticButton = ({ children, onClick, className = "" }) => {
@@ -189,7 +224,6 @@ const AboutModal = ({ isOpen, onClose }) => {
     </AnimatePresence>
   );
 };
-// --- Modal 2: Inspirations (Stacking Scroll) ---
 // --- Modal 2: Inspirations (Stacking Scroll) ---
 const InspirationsModal = ({ isOpen, onClose }) => {
   const figures = [
@@ -497,10 +531,14 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   );
 };
 
-const Hero = () => {
+const Hero = ({ onOpenAbout }) => {
   const { mouseX, mouseY } = useMousePosition();
   const spotlightX = useSpring(mouseX, { stiffness: 100, damping: 20 });
   const spotlightY = useSpring(mouseY, { stiffness: 100, damping: 20 });
+  
+  // Typewriter words
+  const words = ["STABLE_LOGIC", "ZERO_LATENCY", "QUANTUM_CODING", "NEURAL_LINK", "EDGE_COMPUTE", "CLOUD_NATIVE", "DEEP_LEARN"];
+  const typewriterText = useTypewriter(words, 120, 60, 2000);
 
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-0 md:pt-20">
@@ -547,14 +585,19 @@ const Hero = () => {
               ARCHITECTING
             </motion.span>
           </div>
-          <div className="overflow-hidden py-1">
+          <div className="overflow-hidden py-1 h-[1.2em]">
             <motion.span 
               initial={{ y: "110%" }} 
               animate={{ y: 0 }} 
               transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="inline-block text-blue-600 font-mono italic"
             >
-              STABLE_LOGIC
+              {typewriterText}
+              <motion.span 
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="inline-block w-[2px] h-[0.8em] bg-blue-600 ml-1 align-middle"
+              />
             </motion.span>
           </div>
         </h1>
@@ -649,7 +692,7 @@ const ProjectItem = ({ project, index }) => {
   );
 };
 
-const PhilosophySection = () => {
+const PhilosophySection = ({ onOpenAbout }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({ target: container, offset: ["start end", "end start"] });
   const xText = useTransform(scrollYProgress, [0, 1], [50, -50]);
@@ -670,6 +713,18 @@ const PhilosophySection = () => {
             <p className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
               Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
             </p>
+            {/* More About Me Button */}
+            <motion.button
+              onClick={onOpenAbout}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="group flex items-center gap-3 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold transition-all rounded-sm"
+            >
+              More About Me
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </motion.button>
           </div>
           
           <div className="grid grid-cols-2 gap-3 md:gap-4">
@@ -782,7 +837,7 @@ const App = () => {
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
       
-      <Hero />
+      <Hero onOpenAbout={() => setIsAboutOpen(true)} />
 
       <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-100 pb-12 gap-8">
@@ -800,7 +855,7 @@ const App = () => {
         </div>
       </section>
 
-      <PhilosophySection />
+      <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
       <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden bg-white pt-20">
         <div className="text-center relative z-10">
@@ -826,9 +881,9 @@ const App = () => {
       </section>
 
       <Footer 
-  onOpenInspirations={() => setIsInspirationsOpen(true)} 
-  onOpenAbout={() => setIsAboutOpen(true)} 
-/>
+        onOpenInspirations={() => setIsInspirationsOpen(true)} 
+        onOpenAbout={() => setIsAboutOpen(true)} 
+      />
 
       <style>{`
         * { cursor: none; scroll-behavior: smooth; }
