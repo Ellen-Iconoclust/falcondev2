@@ -1,0 +1,580 @@
+4th program 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sri Ramakrishna College Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            scroll-behavior: smooth;
+        }
+        header {
+            background: purple;
+            color: white;
+            text-align: center;
+            padding: 18px;
+        }
+        nav {
+            background: #e9d5ff;
+            text-align: center;
+            padding: 12px;
+        }
+        nav a {
+            margin: 0 16px;
+            text-decoration: none;
+            font-weight: bold;
+            color: purple;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 30px;
+        }
+        h2 {
+            color: purple;
+        }
+        footer {
+            background: purple;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Sri Ramakrishna College of Arts & Science</h1>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#departments">Departments</a>
+    <a href="#admissions">Admissions</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section id="home">
+    <h2>Welcome to Our College</h2>
+    <p>SRCAS provides high-quality education with modern labs, 
+       experienced faculty, and excellent campus facilities.</p>
+</section>
+
+<section id="departments">
+    <h2>Departments</h2>
+    <p>We offer a wide range of programs:</p>
+    <ul>
+        <li>Computer Science</li>
+        <li>Commerce</li>
+        <li>English Literature</li>
+        <li>Mathematics</li>
+        <li>Business Administration</li>
+    </ul>
+</section>
+
+<section id="admissions">
+    <h2>Admissions</h2>
+    <p>Admissions are open for 2025-2026.</p>
+    <p>Application forms are available online and in the admin office.</p>
+</section>
+
+<footer id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: info@srcas.edu | Phone: +91 98765 43210</p>
+    <p> 2025 Sri Ramakrishna College of Arts & Science</p>
+</footer>
+
+</body>
+</html>
+
+
+
+
+5th program 
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SRCAS Programming Event</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            scroll-behavior: smooth;
+        }
+        header {
+            background: purple;
+            color: white;
+            text-align: center;
+            padding: 18px;
+        }
+        nav {
+            background: #e9d5ff;
+            text-align: center;
+            padding: 12px;
+        }
+        nav a {
+            margin: 0 16px;
+            text-decoration: none;
+            font-weight: bold;
+            color: purple;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: purple;
+        }
+        footer {
+            background: purple;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* Registration Form Styling */
+        #regForm {
+            display: none;
+            background: #f3e8ff;
+            padding: 20px;
+            width: 300px;
+            margin: 20px auto;
+            border: 2px solid purple;
+            border-radius: 8px;
+        }
+        input, select {
+            width: 90%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        .btn {
+            background: purple;
+            color: white;
+            padding: 8px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: darkmagenta;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Programming Event 2025</h1>
+    <h3>Organized by SRCAS</h3>
+</header>
+
+<nav>
+    <a href="#about">About</a>
+    <a href="#events">Events</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section id="about">
+    <h2>About the Event</h2>
+    <p>Join us for a thrilling Programming Event at SRCAS! 
+       Compete, learn, and create amazing solutions.</p>
+
+    <button class="btn" onclick="showForm()">Register Now</button>
+
+    <!-- Registration Form -->
+    <form id="regForm">
+        <h3>Registration Form</h3>
+        <input type="text" placeholder="Name" required>
+        <input type="text" placeholder="Reg. No" required>
+        <input type="text" placeholder="Department" required>
+
+        <select required>
+            <option value="">Select Shift</option>
+            <option>Shift 1</option>
+            <option>Shift 2</option>
+        </select>
+
+        <select required>
+            <option value="">Event Applying For</option>
+            <option>Coding Challenge</option>
+            <option>Debugging</option>
+            <option>Mini Game Development</option>
+        </select>
+
+        <br>
+        <button class="btn" type="button" onclick="submitForm()">Submit</button>
+    </form>
+</section>
+
+<section id="events">
+    <h2>Event Categories</h2>
+    <ul>
+        <li>Coding Challenge</li>
+        <li>Debugging</li>
+        <li>Mini Game Development</li>
+    </ul>
+</section>
+
+<footer id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: csdept@srcas.ac.in | Phone: +91 98765 43210</p>
+    <p>© 2025 SRCAS Programming Club</p>
+</footer>
+
+<script>
+    function showForm() {
+        document.getElementById("regForm").style.display = "block";
+    }
+
+    function submitForm() {
+        alert("Registration Submitted Successfully!");
+        document.getElementById("regForm").style.display = "none";
+    }
+</script>
+
+</body>
+</html>
+
+
+
+6th Program
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRCAS Text Styles Paragraph</title>
+
+    <style>
+        .bold { font-weight: bold; }
+        .italic { font-style: italic; }
+        .underline { text-decoration: underline; }
+        .color { color: blue; }
+        .uppercase { text-transform: uppercase; }
+        .shadow { text-shadow: 2px 2px 3px gray; }
+        .spacing { letter-spacing: 3px; }
+        p { margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+
+<h2>About SRCAS with Text Styles</h2>
+<p class="bold">Sri Ramakrishna College of Arts and Science (SRCAS) is one of the leading institutions in Coimbatore offering quality education.</p>
+<p class="italic">It provides a wide range of undergraduate and postgraduate programs to help students achieve their career goals.</p>
+<p class="underline">The college campus is well equipped with modern facilities and a peaceful environment for learning.</p>
+<p class="color">SRCAS encourages students to participate in various events and activities to enhance their skills.</p>
+<p class="uppercase">The college aims to develop students with strong academic knowledge and leadership qualities.</p>
+<p class="shadow">It also supports innovative thinking and research to shape the future of the youth.</p>
+<p class="spacing">Overall, SRCAS is a great place for students to grow and build a successful future.</p>
+</body>
+</html>
+
+
+7th Program 
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas</title>
+    <style>
+        canvas{
+            border: 2px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2 style="text-align: center;">Canvas</h2>
+
+<canvas id="myCanvas" width="300" height="200"></canvas>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+ctx.fillStyle = "blue";
+ctx.fillRect(20,20,120,70);
+
+ctx.beginPath();
+ctx.arc(200,100,40,0,2*Math.PI);
+ctx.stroke();
+</script>
+
+</body>
+</html>
+
+
+8th program 
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas</title>
+    <style>
+        canvas{
+            border: 2px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2 style="text-align: center;">Canvas Smiley</h2>
+
+<canvas id="myCanvas" width="300" height="300"></canvas>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+// Face
+ctx.beginPath();
+ctx.arc(150,150,100,0, Math.PI*2);
+ctx.fillStyle="yellow";
+ctx.fill();
+ctx.stroke();
+
+// Left Eye
+ctx.beginPath();
+ctx.arc(110,120,15,0, Math.PI*2);
+ctx.fillStyle="black";
+ctx.fill();
+
+// Right Eye
+ctx.beginPath();
+ctx.arc(190,120,15,0, Math.PI*2);
+ctx.fillStyle="black";
+ctx.fill();
+
+// Smile
+ctx.beginPath();
+ctx.arc(150,170,60,0, Math.PI);
+ctx.lineWidth=5;
+ctx.stroke();
+</script>
+
+</body>
+</html>
+
+
+
+9th Program 
+
+
+The 9th Program in Web Development will not work so write this Program instead 
+
+Audio & Video Files in HTML5
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio and Online Video Example</title>
+</head>
+
+<body>
+
+  <h2>Audio File Example</h2>
+  <audio controls>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <h2>Online Video Example</h2>
+  <video width="400" height="250" controls>
+    <source src="https://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+</body>
+
+</html>
+
+
+
+10th Program
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<webpage>
+<head>
+ <title>Random Statement Display using XML</title>
+ <style>
+ body {
+ font-family: Arial;
+ text-align: center;
+ padding-top: 50px;
+ }
+ p {
+ font-size: 22px;
+ font-weight: bold;
+ color: darkblue;
+ }
+ </style>
+</head>
+<body>
+ <h2>Random Statement Generator (XML + JavaScript)</h2>
+ <p id="output">Your random message will appear here.</p>
+ <script>
+ var statements = [
+ "Believe in yourself!",
+ "Every day is a fresh start.",
+ "Success comes with patience.",
+ "Dream big and work hard.",
+ "Be happy with what you have."
+ ];
+ var randomIndex = Math.floor(Math.random() * statements.length);
+ document.getElementById("output").innerHTML = statements[randomIndex];
+ </script>
+</body>
+</webpage>
+
+
+
+11th Program
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<webpage>
+<head>
+ <title>Student List using XML</title>
+ <style>
+ body {
+ font-family: Arial;
+ text-align: center;
+ margin-top: 30px;
+ }
+ table {
+ margin: auto;
+ border-collapse: collapse;
+ width: 50%
+ }
+ th, td {
+ border: 1px solid black;
+ padding: 10px;
+ }
+ th {
+ background-color: #e0e0e0;
+ }
+ </style>
+</head>
+<body>
+ <h2>Student List</h2>
+ <table>
+ <tr>
+ <th>Name</th>
+ <th>Roll No</th>
+ </tr>
+ <tbody id="data"></tbody>
+ </table>
+ <script>
+ var students = [
+ { name: "Ellen", roll: "101" },
+ { name: "Madelyn", roll: "102" },
+ { name: "John", roll: "103" },
+ { name: "Sophia", roll: "104" }
+ ];
+ var tableBody = document.getElementById("data");
+ for (var i = 0; i < students.length; i++) {
+ var row = "<tr><td>" + students[i].name + "</td><td>" + students[i].roll +
+"</td></tr>";
+ tableBody.innerHTML += row;
+ }
+ </script>
+</body>
+</webpage>
+
+
+
+12th program
+
+
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<webpage>
+<head><title>Books Catalog</title>
+<style>body{font-family:Arial;text-align:center;margin-top:30px;background:#fff}table{margin:auto;border-collapse:collapse;width:70%}th,td{border:1px solid #000;padding:10px}th{background-color:#e0e0e0}td{background-color:#fff}</style>
+</head><body><h2>Books_Catalog</h2><table><tr><th>Title</th><th>Author</th><th>Publisher</th><th>Year</th><th>Price (₹)</th></tr>
+<tbody id="bookData"></tbody></table><script>var b=[{t:"Learning XML",a:"Peter Wilson",p:"TechWorld",y:"2021",pr:"350"},{t:"JavaScript Guide",a:"Sarah Brown",p:"CodePress",y:"2022",pr:"450"},{t:"Web Designing",a:"John Adams",p:"WebTech",y:"2023",pr:"500"},{t:"Database Essentials",a:"Maria Lewis",p:"DataPub",y:"2020",pr:"400"}],d=document.getElementById("bookData");for(var i=0;i<b.length;i++)d.innerHTML+="<tr><td>"+b[i].t+"</td><td>"+b[i].a+"</td><td>"+b[i].p+"</td><td>"+b[i].y+"</td><td>"+b[i].pr+"</td></tr>";
+</script>
+</body>
+</webpage>
+
+
+
+13th Program 
+
+
+<!DOCTYPE html>
+<html>
+<head><title>Application Form</title>
+<style>body{font-family:Arial;text-align:center;margin-top:30px;background:#fff}form{width:350px;margin:auto;padding:20px;border:2px solid #000;border-radius:10px;background:#f9f9f9}input,select{width:90%;padding:8px;margin:10px 0;background:#fff}button{padding:10px 20px;background-color:#007bff;color:#fff;cursor:pointer;border:none}button:hover{background-color:#0056b3}.output{margin-top:30px;font-size:18px;color:darkgreen}
+</style>
+</head>
+<body><h2>Application Form</h2><form id="appForm"><input type="text" id="name" placeholder="Enter Name" required><input type="email" id="email" placeholder="Enter Email" required><select id="course"><option value="">Select Course</option><option value="Computer Science">Computer Science</option><option value="Commerce">Commerce</option><option value="Arts">Arts</option></select><button type="button" onclick="submitForm()">Submit</button></form><div class="output" id="result"></div>
+<script>
+function submitForm(){var n=document.getElementById("name").value,e=document.getElementById("email").value,c=document.getElementById("course").value,r=document.getElementById("result");if(n==""||e==""||c==""){alert("Please fill all the fields!");return}r.innerHTML="<strong>Application Submitted!</strong><br><br>Name: "+n+"<br>Email: "+e+"<br>Course: "+c;document.getElementById("appForm").reset()}
+</script>
+</body>
+</html>
+
+
+
+14th program
+
+<!DOCTYPE html>
+<html>
+<head><title>Number Guessing Game</title>
+<style>body{font-family:Arial;text-align:center;margin-top:50px;background:#fff}input{padding:8px;width:150px}button{padding:10px 15px;margin-left:10px;background-color:#28a745;border:none;color:white;cursor:pointer}button:hover{background-color:#1f7a34}#message{margin-top:25px;font-size:18px;font-weight:bold}</style>
+</head>
+<body><h2>Number Guessing Game</h2><p>Guess a number between <strong>1</strong> and <strong>50</strong></p><input type="number" id="guess" placeholder="Enter your guess"><button onclick="checkGuess()">Check</button><div id="message"></div>
+<script>
+var r=Math.floor(Math.random()*50)+1;function checkGuess(){var g=document.getElementById("guess").value,m=document.getElementById("message");if(g==""){m.innerHTML="Please enter a number!";m.style.color="red";return}if(g==r){m.innerHTML="Correct! You guessed the right number!";m.style.color="green"}else if(g>r){m.innerHTML="Too High! Try again.";m.style.color="blue"}else{m.innerHTML="Too Low! Try again.";m.style.color="orange"}}
+</script>
+</body>
+</html>
+
+15th program
+
+
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>DNA to RNA Converter</title>
+<style>body{font-family:Arial;text-align:center;margin-top:50px;background:#fff}h2{color:#333}p{color:#666}input{width:300px;padding:8px;margin:10px}button{padding:10px 20px;background:#007bff;color:white;border:none;cursor:pointer}button:hover{background:#0056b3}#result{margin-top:20px;font-weight:bold}
+</style>
+</head>
+<body>
+<h2>DNA to RNA Converter</h2><p>Enter DNA sequence (A,C,G,T only)</p><input type="text" id="dnaInput" placeholder="Example: ACTGGTAC"><br><button onclick="convertDNA()">Convert</button><div id="result"></div>
+<script>function convertDNA(){var d=document.getElementById("dnaInput").value.toUpperCase(),r=document.getElementById("result");if(d==""){r.innerHTML="Please enter DNA sequence";r.style.color="red";return}if(!/^[ACGT]+$/.test(d)){r.innerHTML="Invalid characters. Use A,C,G,T only.";r.style.color="red";return}r.innerHTML="RNA Sequence: "+d.replace(/T/g,"U");r.style.color="green"}
+</script>
+</body>
+</html>
+
