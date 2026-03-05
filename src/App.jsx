@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import * as THREE from 'three';
 import { 
   ArrowUpRight,
   X,
@@ -14,7 +15,14 @@ import {
   ArrowRight,
   User,
   Quote,
-  Lightbulb
+  Lightbulb,
+  MapPin,
+  Navigation,
+  TrendingUp,
+  Activity,
+  Award,
+  Target,
+  Clock
 } from 'lucide-react';
 
 // --- Custom Hooks ---
@@ -46,7 +54,6 @@ const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime =
       const currentWord = words[wordIndex];
       
       if (!isDeleting && text === currentWord) {
-        // Pause at the end of typing
         setTimeout(() => setIsDeleting(true), pauseTime);
         return;
       }
@@ -68,6 +75,241 @@ const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime =
   }, [text, wordIndex, isDeleting, words, typingSpeed, deletingSpeed, pauseTime]);
 
   return text;
+};
+
+// --- 3D Earth Component ---
+const Earth3D = () => {
+  const containerRef = useRef(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationName, setLocationName] = useState('');
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    
+    renderer.setSize(300, 300);
+    renderer.setClearColor(0x000000, 0);
+    containerRef.current.appendChild(renderer.domElement);
+
+    // Earth sphere
+    const geometry = new THREE.SphereGeometry(5, 64, 64);
+    
+    // Load earth texture
+    const textureLoader = new THREE.TextureLoader();
+    const earthTexture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+    
+    const material = new THREE.MeshPhongMaterial({
+      map: earthTexture,
+      shininess: 5
+    });
+    
+    const earth = new THREE.Mesh(geometry, material);
+    scene.add(earth);
+
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0x404060);
+    scene.add(ambientLight);
+
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 3, 5);
+    scene.add(directionalLight);
+
+    // Add stars background
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 1000;
+    const starsPositions = new Float32Array(starsCount * 3);
+    
+    for (let i = 0; i < starsCount * 3; i += 3) {
+      starsPositions[i] = (Math.random() - 0.5) * 200;
+      starsPositions[i+1] = (Math.random() - 0.5) * 200;
+      starsPositions[i+2] = (Math.random() - 0.5) * 200;
+    }
+    
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+    const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+
+    camera.position.z = 15;
+
+    // Animation
+    let animationFrame;
+    const animate = () => {
+      animationFrame = requestAnimationFrame(animate);
+      
+      earth.rotation.y += 0.001;
+      stars.rotation.y += 0.0001;
+      
+      renderer.render(scene, camera);
+    };
+    
+    animate();
+
+    // Get user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
+          
+          // Reverse geocoding to get location name
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            );
+            const data = await response.json();
+            setLocationName(data.display_name.split(',')[0]);
+          } catch (error) {
+            console.error('Error getting location name:', error);
+          }
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    }
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      if (containerRef.current) {
+        containerRef.current.removeChild(renderer.domElement);
+      }
+      renderer.dispose();
+    };
+  }, []);
+
+  return (
+    <div className="relative flex flex-col items-center justify-center">
+      <div ref={containerRef} className="w-[300px] h-[300px]" />
+      {userLocation && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-sm px-4 py-2 border border-blue-500/30 rounded-sm"
+        >
+          <div className="flex items-center gap-2 text-xs">
+            <MapPin size={12} className="text-blue-400" />
+            <span className="text-white font-mono">
+              {locationName || `${userLocation.latitude.toFixed(2)}°, ${userLocation.longitude.toFixed(2)}°`}
+            </span>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+// --- Stats Ticker Component ---
+const StatsTicker = () => {
+  const stats = [
+    { label: 'Projects Delivered', value: '47', icon: Award, change: '+12' },
+    { label: 'Lines of Code', value: '2.4M', icon: Code, change: '+180K' },
+    { label: 'Happy Clients', value: '32', icon: User, change: '+8' },
+    { label: 'GitHub Stars', value: '1.8K', icon: TrendingUp, change: '+342' },
+    { label: 'Contributions', value: '856', icon: Activity, change: '+156' },
+    { label: 'Countries Reached', value: '24', icon: Globe, change: '+5' },
+    { label: 'Response Time', value: '45ms', icon: Clock, change: '-12ms' },
+    { label: 'Uptime', value: '99.99%', icon: Zap, change: '+0.02%' },
+  ];
+
+  return (
+    <div className="w-full bg-slate-900 border-y border-blue-500/20 overflow-hidden py-4 transform -skew-y-1">
+      <div className="relative">
+        <motion.div 
+          className="flex whitespace-nowrap"
+          animate={{ x: [0, -2000] }}
+          transition={{ 
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          {[...stats, ...stats].map((stat, index) => (
+            <div key={index} className="flex items-center gap-6 mx-8">
+              <div className="flex items-center gap-3">
+                <stat.icon size={16} className="text-blue-400" />
+                <span className="text-white/60 text-xs font-mono uppercase tracking-wider">{stat.label}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-white font-bold text-lg">{stat.value}</span>
+                <span className="text-green-400 text-xs font-mono">{stat.change}</span>
+              </div>
+              <div className="w-px h-6 bg-blue-500/20" />
+            </div>
+          ))}
+        </motion.div>
+        
+        {/* Gradient overlays */}
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-900 to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-900 to-transparent z-10" />
+      </div>
+    </div>
+  );
+};
+
+// --- Enhanced Cursor with Trail ---
+const EnhancedCursor = () => {
+  const { mouseX, mouseY } = useMousePosition();
+  const [trailPositions, setTrailPositions] = useState([]);
+  
+  const cursorX = useSpring(mouseX, { stiffness: 1000, damping: 50 });
+  const cursorY = useSpring(mouseY, { stiffness: 1000, damping: 50 });
+
+  useEffect(() => {
+    const unsubscribeX = cursorX.onChange(v => {
+      setTrailPositions(prev => {
+        const newPos = { x: v, y: cursorY.get() };
+        const filtered = [...prev, newPos].slice(-8);
+        return filtered;
+      });
+    });
+    
+    return () => unsubscribeX();
+  }, [cursorX, cursorY]);
+
+  return (
+    <>
+      {/* Main cursor */}
+      <motion.div
+        style={{ 
+          left: cursorX, 
+          top: cursorY,
+          x: '-50%',
+          y: '-50%'
+        }}
+        className="fixed pointer-events-none z-[9999] mix-blend-difference"
+      >
+        <div className="relative">
+          <div className="w-6 h-6 border-2 border-white rounded-full animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full" />
+        </div>
+      </motion.div>
+
+      {/* Trail */}
+      {trailPositions.map((pos, i) => (
+        <motion.div
+          key={i}
+          style={{
+            left: pos.x,
+            top: pos.y,
+            x: '-50%',
+            y: '-50%',
+            scale: 1 - i * 0.1,
+            opacity: 0.2 - i * 0.02
+          }}
+          className="fixed pointer-events-none z-[9998] w-4 h-4 border border-blue-400 rounded-full"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 - i * 0.1 }}
+          transition={{ duration: 0.2 }}
+        />
+      ))}
+    </>
+  );
 };
 
 // --- Components ---
@@ -112,7 +354,7 @@ const AboutModal = ({ isOpen, onClose }) => {
           className="fixed inset-0 z-[200] bg-white overflow-y-auto"
         >
           <div className="min-h-screen w-full relative">
-            {/* Only X button - no Back to Home */}
+            {/* X button */}
             <button 
               onClick={onClose}
               className="fixed top-8 right-8 z-30 w-10 h-10 rounded-none bg-white border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"
@@ -124,7 +366,7 @@ const AboutModal = ({ isOpen, onClose }) => {
             <div className="w-full max-w-7xl mx-auto px-8 md:px-10 py-28 md:py-36">
               {/* Grid Layout */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-auto">
-                {/* div1: Photo - spans 1 column, 2 rows on desktop */}
+                {/* div1: Photo */}
                 <div className="md:col-span-1 md:row-span-2 bg-slate-900 overflow-hidden group h-[350px] md:h-[500px] relative border border-slate-800">
                   <img 
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800" 
@@ -137,7 +379,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* div2: Manifesto - spans 2 columns */}
+                {/* div2: Manifesto */}
                 <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-center min-h-[220px]">
                   <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-4">Manifesto</span>
                   <p className="text-base md:text-lg font-medium tracking-wide leading-relaxed text-slate-700">
@@ -147,11 +389,9 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </p>
                 </div>
 
-                {/* div3: Location */}
-                <div className="bg-blue-50 border-2 border-blue-200 p-8 md:p-10 flex flex-col items-start justify-center min-h-[180px]">
-                  <Globe size={24} className="text-blue-600 mb-4" />
-                  <span className="text-[8px] uppercase tracking-[0.2em] text-slate-500 mb-1.5 font-bold">Node Location</span>
-                  <span className="font-mono text-lg md:text-xl text-slate-900">11.01°N, 76.95°E</span>
+                {/* div3: Earth Location - Replaced old location */}
+                <div className="md:col-span-2 bg-blue-50 border-2 border-blue-200 p-8 md:p-10 flex items-center justify-center min-h-[300px]">
+                  <Earth3D />
                 </div>
 
                 {/* div4: Build Version */}
@@ -171,11 +411,9 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                   <div className="overflow-hidden relative">
                     <div className="flex gap-3 animate-scroll whitespace-nowrap">
-                      {/* First set */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                         <span key={s} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
-                      {/* Duplicate for seamless loop */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                         <span key={`${s}-2`} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
@@ -189,7 +427,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                   <p className="text-[10px] md:text-xs font-mono text-slate-600 leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
                 </div>
 
-                {/* div7: System Status - spans full width */}
+                {/* div7: System Status */}
                 <div className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 border-2 border-slate-700 p-5 md:p-6 flex items-center justify-between">
                   <span className="text-blue-400 font-mono text-sm md:text-base flex items-center gap-3">
                     <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
@@ -224,40 +462,64 @@ const AboutModal = ({ isOpen, onClose }) => {
     </AnimatePresence>
   );
 };
-// --- Modal 2: Inspirations (Stacking Scroll) ---
+
+// --- Modal 2: Inspirations (Enhanced with cross animation) ---
 const InspirationsModal = ({ isOpen, onClose }) => {
   const figures = [
     {
       name: "Isaac Newton",
       legacy: "Laws of Motion, Gravity, Differential and Integral Calculus.",
       achievement: "Achieved his primary breakthroughs before turning 26.",
-      color: "bg-blue-600"
+      color: "bg-blue-600",
+      icon: "🔭"
     },
     {
       name: "Steve Jobs",
       legacy: "Apple, Transformative Marketing, and Mindmastery.",
       achievement: "Revolutionized personal computing and design aesthetics.",
-      color: "bg-slate-900"
+      color: "bg-slate-900",
+      icon: "📱"
     },
     {
       name: "Guido Van Rossum",
       legacy: "Benevolent Dictator for Life of the Python Language.",
       achievement: "Prioritized code readability and programmer productivity.",
-      color: "bg-blue-500"
+      color: "bg-blue-500",
+      icon: "🐍"
     },
     {
       name: "Ada Lovelace",
       legacy: "The First Computer Algorithm for the Analytical Engine.",
       achievement: "Envisioned computers as more than just calculating machines.",
-      color: "bg-slate-800"
+      color: "bg-slate-800",
+      icon: "💻"
     },
     {
       name: "Mark Zuckerberg",
       legacy: "Facebook, Connectivity, and Young Entrepreneurship.",
       achievement: "Redefined social interaction and scaled systems globally.",
-      color: "bg-blue-700"
+      color: "bg-blue-700",
+      icon: "🌐"
     }
   ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        staggerChildren: 0.1,
+        staggerDirection: -1
+      }
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -270,26 +532,39 @@ const InspirationsModal = ({ isOpen, onClose }) => {
         >
           <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-16 scrollbar-hide">
             <div className="max-w-4xl mx-auto">
-              <div className="mb-20 md:mb-32">
+              <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="mb-20 md:mb-32"
+              >
                 <h2 className="text-6xl md:text-8xl font-bold tracking-tighter text-slate-900 mb-6">ARCHETYPES</h2>
                 <p className="text-slate-400 font-mono text-xs uppercase tracking-widest">Architects of the modern intellectual landscape.</p>
-              </div>
+              </motion.div>
 
-              <div className="space-y-[15vh] md:space-y-[20vh] pb-[30vh]">
+              <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="space-y-[15vh] md:space-y-[20vh] pb-[30vh]"
+              >
                 {figures.map((figure, idx) => (
-                  <InspirationCard key={figure.name} figure={figure} index={idx} total={figures.length} />
+                  <InspirationCard key={figure.name} figure={figure} index={idx} />
                 ))}
-              </div>
+              </motion.div>
             </div>
 
             {/* Sticky controls */}
             <div className="fixed top-8 right-8 z-[210]">
-              <button 
+              <motion.button 
                 onClick={onClose}
-                className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-xl"
               >
                 <X size={24} />
-              </button>
+              </motion.button>
             </div>
           </div>
         </motion.div>
@@ -298,73 +573,149 @@ const InspirationsModal = ({ isOpen, onClose }) => {
   );
 };
 
-const InspirationCard = ({ figure, index, total }) => {
+const InspirationCard = ({ figure, index }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
     offset: ["start end", "end start"]
   });
 
-  // Scale: start at 0.95, reach 1, then stay at 1
+  const cardVariants = {
+    hidden: { 
+      opacity: 0,
+      rotateX: -30,
+      rotateY: 45,
+      scale: 0.8,
+      y: 100
+    },
+    visible: {
+      opacity: 1,
+      rotateX: 0,
+      rotateY: 0,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20,
+        mass: 1
+      }
+    },
+    exit: {
+      opacity: 0,
+      rotateX: 30,
+      rotateY: -45,
+      scale: 0.8,
+      y: -100,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
+  // Parallax effects
   const scale = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
     [0.95, 1, 1, 0.95]
   );
 
-  // Y position: slight movement
   const y = useTransform(
     scrollYProgress, 
     [0, 0.5, 1], 
     [30, 0, -30]
   );
 
-  // Subtle opacity change - never go below 0.9
-  const opacity = useTransform(
-    scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
-    [0.9, 1, 1, 0.9]
+  const rotateX = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [5, 0, -5]
   );
 
   return (
     <motion.div 
       ref={container}
+      variants={cardVariants}
       style={{ 
         scale, 
-        opacity,
         y,
+        rotateX,
         position: 'sticky',
         top: '10vh',
       }}
       className={`w-full min-h-[400px] md:min-h-[500px] ${figure.color} rounded-2xl p-8 md:p-16 flex flex-col justify-between text-white shadow-2xl overflow-hidden`}
     >
-      <div className="absolute top-0 right-0 p-8 md:p-12 opacity-10">
-        <Lightbulb size={200} strokeWidth={1} />
-      </div>
+      {/* Animated background icon */}
+      <motion.div 
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ delay: 0.3, type: "spring" }}
+        className="absolute top-0 right-0 p-8 md:p-12 opacity-10 text-9xl"
+      >
+        {figure.icon}
+      </motion.div>
 
       <div className="relative z-10">
-        <div className="flex items-center gap-4 mb-8">
+        <motion.div 
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center gap-4 mb-8"
+        >
           <span className="w-8 h-[1px] bg-white/40" />
           <span className="text-[10px] font-mono tracking-widest uppercase opacity-60">Sequence_0{index + 1}</span>
-        </div>
-        <h3 className="text-4xl md:text-7xl font-bold tracking-tighter mb-6">{figure.name}</h3>
-        <p className="text-lg md:text-2xl font-light opacity-80 max-w-xl mb-12 italic leading-tight">
+        </motion.div>
+        
+        <motion.h3 
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="text-4xl md:text-7xl font-bold tracking-tighter mb-6"
+        >
+          {figure.name}
+        </motion.h3>
+        
+        <motion.p 
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-lg md:text-2xl font-light opacity-80 max-w-xl mb-12 italic leading-tight"
+        >
           "{figure.legacy}"
-        </p>
+        </motion.p>
       </div>
 
-      <div className="relative z-10 border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <motion.div 
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="relative z-10 border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6"
+      >
         <div className="max-w-md">
           <span className="text-[8px] uppercase tracking-widest font-bold opacity-40 mb-2 block">Breakthrough_Event</span>
           <p className="text-sm font-mono leading-relaxed">{figure.achievement}</p>
         </div>
-        <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
+        <motion.div 
+          whileHover={{ scale: 1.2, rotate: 45 }}
+          className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center cursor-pointer"
+        >
           <ArrowRight size={20} />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Cross animation overlay */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ delay: 0.6, duration: 0.8 }}
+      >
+        <div className="absolute inset-0 bg-white/10" style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' }} />
+      </motion.div>
     </motion.div>
   );
 };
+
 const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -377,21 +728,20 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   const isExpanded = !isScrolled || isHovered;
 
-  // Close mobile menu when clicking a link
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
 
   return (
     <>
-      {/* Desktop Navbar - with "About" instead of "Admin" */}
+      {/* Desktop Navbar - Removed "Root" */}
       <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
         <motion.nav 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           initial={false}
           animate={{
-            width: isExpanded ? "min(650px, 90vw)" : "160px",
+            width: isExpanded ? "min(600px, 90vw)" : "160px",
             paddingLeft: isExpanded ? "24px" : "16px",
             paddingRight: isExpanded ? "24px" : "16px",
             backgroundColor: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(248, 250, 252, 0.85)",
@@ -411,7 +761,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                 className="flex items-center justify-between w-full"
               >
                 <div className="flex items-center gap-4 md:gap-8">
-                  {['Work', 'Protocol', 'Root'].map((item) => (
+                  {['Work', 'Protocol'].map((item) => (
                     <a key={item} href={`#${item.toLowerCase() === 'work' ? 'repositories' : item.toLowerCase()}`} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">{item}</a>
                   ))}
                   <button onClick={onOpenInspirations} className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold text-slate-500 hover:text-blue-600 transition-colors">Inspirations</button>
@@ -435,10 +785,9 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </motion.nav>
       </div>
 
-      {/* Mobile Navbar - Small and centered */}
+      {/* Mobile Navbar */}
       <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 md:hidden">
         <div className="flex items-center justify-between w-auto min-w-[200px] px-4 py-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-sm shadow-sm">
-          {/* Name */}
           <button 
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
             className="text-sm font-bold text-slate-900 font-mono tracking-tight mr-4"
@@ -446,7 +795,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
             Ellen
           </button>
 
-          {/* Menu Icon */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="w-8 h-8 flex flex-col items-center justify-center gap-1 hover:bg-slate-100 rounded-sm transition-colors"
@@ -457,7 +805,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
           </button>
         </div>
 
-        {/* Mobile Menu Dropdown */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -481,13 +828,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                   className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
                 >
                   Protocol
-                </a>
-                <a 
-                  href="#root" 
-                  onClick={handleLinkClick}
-                  className="px-3 py-2.5 text-[10px] uppercase tracking-[0.2em] font-bold text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-sm transition-colors text-center"
-                >
-                  Root
                 </a>
                 <button 
                   onClick={() => {
@@ -514,7 +854,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </AnimatePresence>
       </div>
 
-      {/* Overlay for mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
@@ -535,23 +874,17 @@ const Hero = ({ onOpenAbout }) => {
   const spotlightX = useSpring(mouseX, { stiffness: 100, damping: 20 });
   const spotlightY = useSpring(mouseY, { stiffness: 100, damping: 20 });
   
-  // Typewriter words
   const words = ["STABLE_LOGIC", "ZERO_LATENCY", "QUANTUM_CODING", "NEURAL_LINK", "EDGE_COMPUTE", "CLOUD_NATIVE", "DEEP_LEARN"];
   const typewriterText = useTypewriter(words, 120, 60, 2000);
 
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-0 md:pt-20">
-      {/* Top blue blur blob - mobile only, near navbar */}
       <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-blue-500/20 rounded-full blur-[60px] z-0 md:hidden" />
-      
-      {/* Subtle blue blur blob - always visible */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-blue-600/10 rounded-full blur-[80px] md:blur-[160px] z-0" />
       
-      {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
         style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
 
-      {/* Mouse-following blobs - desktop only */}
       <motion.div 
         style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
         className="pointer-events-none absolute w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-blue-600/20 rounded-full blur-[120px] md:blur-[160px] z-0 hidden md:block"
@@ -642,7 +975,6 @@ const ProjectItem = ({ project, index }) => {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
       className="relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 border-slate-200 bg-white shadow-2xl shadow-blue-900/10 hover:border-blue-500 transition-colors duration-500"
     >
-      {/* Visual Outline Overlay */}
       <div className="absolute inset-2 border border-slate-100 pointer-events-none group-hover:border-blue-100 transition-colors duration-500" />
       
       <motion.div 
@@ -712,7 +1044,6 @@ const PhilosophySection = ({ onOpenAbout }) => {
             <p className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
               Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
             </p>
-            {/* More About Me Button */}
             <motion.button
               onClick={onOpenAbout}
               initial={{ opacity: 0, y: 20 }}
@@ -856,7 +1187,10 @@ const App = () => {
 
       <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
-      <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden bg-white pt-20">
+      {/* Stats Ticker - Placed before CTA */}
+      <StatsTicker />
+
+      <section id="cta" className="min-h-[70vh] flex flex-col items-center justify-center px-6 relative overflow-hidden bg-white pt-20">
         <div className="text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -885,48 +1219,32 @@ const App = () => {
       />
 
       <style>{`
-        * { cursor: none; scroll-behavior: smooth; }
+        * { 
+          cursor: none; 
+          scroll-behavior: smooth; 
+        }
         @media (max-width: 1024px) {
           * { cursor: auto !important; }
-          .cursor-follow { display: none !important; }
+          .cursor-follow, .cursor-trail { display: none !important; }
         }
-        body { background: #ffffff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        body { 
+          background: #ffffff; 
+          font-family: 'Space Grotesk', sans-serif; 
+          overflow-x: hidden; 
+        }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
         .signature { font-family: 'Great Vibes', cursive; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .cursor-follow {
-          position: fixed;
-          width: 6px;
-          height: 6px;
-          background: #2563eb;
-          pointer-events: none;
-          z-index: 9999;
-          box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
-        }
         
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: #ffffff; }
         ::-webkit-scrollbar-thumb { background: #2563eb; }
       `}</style>
       
-      <CursorFollower />
+      <EnhancedCursor />
     </div>
   );
 };
-
-const CursorFollower = () => {
-  const { mouseX, mouseY } = useMousePosition();
-  const springX = useSpring(mouseX, { stiffness: 1000, damping: 60 });
-  const springY = useSpring(mouseY, { stiffness: 1000, damping: 60 });
-
-  return (
-    <motion.div 
-      style={{ left: springX, top: springY }}
-      className="cursor-follow"
-    />
-  );
-}
 
 export default App;
