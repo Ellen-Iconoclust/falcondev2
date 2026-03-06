@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { 
@@ -8,13 +7,11 @@ import {
   Terminal,
   Zap,
   Code,
-  Home,
   Layers,
   Sparkles,
   Cpu,
   ArrowRight,
   User,
-  Quote,
   Lightbulb
 } from 'lucide-react';
 
@@ -47,7 +44,6 @@ const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime =
       const currentWord = words[wordIndex];
       
       if (!isDeleting && text === currentWord) {
-        // Pause at the end of typing
         setTimeout(() => setIsDeleting(true), pauseTime);
         return;
       }
@@ -69,6 +65,266 @@ const useTypewriter = (words, typingSpeed = 100, deletingSpeed = 50, pauseTime =
   }, [text, wordIndex, isDeleting, words, typingSpeed, deletingSpeed, pauseTime]);
 
   return text;
+};
+
+// --- Loading Screen Component ---
+const LoadingScreen = ({ onLoadingComplete }) => {
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('INITIALIZING');
+  const [showWelcome, setShowWelcome] = useState(false);
+  
+  useEffect(() => {
+    const statuses = [
+      'INITIALIZING',
+      'COMPILING_ASSETS',
+      'RENDERING_COMPONENTS',
+      'ESTABLISHING_CONNECTION',
+      'LOADING_PROTOCOLS',
+      'READY'
+    ];
+    
+    let currentStatus = 0;
+    
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setShowWelcome(true);
+          setTimeout(() => {
+            onLoadingComplete();
+          }, 1500);
+          return 100;
+        }
+        
+        if (prev % 20 === 0 && prev < 100) {
+          currentStatus = Math.min(currentStatus + 1, statuses.length - 1);
+          setStatus(statuses[currentStatus]);
+        }
+        
+        return prev + 1;
+      });
+    }, 30);
+    
+    return () => clearInterval(interval);
+  }, [onLoadingComplete]);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center"
+    >
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+        style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
+      
+      <div className="relative z-10 w-full max-w-2xl px-8">
+        {/* Logo/Name */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="mb-16 text-center"
+        >
+          <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-blue-600 font-bold mb-4 block">
+            BOOT SEQUENCE
+          </span>
+          <h1 className="text-7xl md:text-8xl font-bold tracking-tighter text-slate-900">
+            ELLEN<span className="text-blue-600 font-mono italic">.sys</span>
+          </h1>
+        </motion.div>
+        
+        {/* Progress Bar */}
+        <motion.div
+          initial={{ scaleX: 0.9, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8"
+        >
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">{status}</span>
+            <span className="text-[9px] font-mono text-blue-600 font-bold">{progress}%</span>
+          </div>
+          <div className="h-[2px] bg-slate-200 w-full relative overflow-hidden">
+            <motion.div 
+              className="absolute top-0 left-0 h-full bg-blue-600"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1 }}
+            />
+          </div>
+        </motion.div>
+        
+        {/* Welcome Message */}
+        <AnimatePresence>
+          {showWelcome && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-center"
+            >
+              <span className="text-sm font-mono text-blue-600 flex items-center justify-center gap-3">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                WELCOME TO THE SYSTEM
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Loading Dots */}
+        <div className="flex justify-center gap-2 mt-12">
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 1, 0.3]
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                delay: i * 0.2
+              }}
+              className="w-1.5 h-1.5 bg-blue-600 rounded-none"
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// --- Particle Effect Component (Google Antigravity Style) ---
+const ParticleBackground = () => {
+  const canvasRef = useRef(null);
+  const { mouseX, mouseY } = useMousePosition();
+  const particles = useRef([]);
+  const animationFrame = useRef();
+  const mousePos = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Create particles
+    const createParticles = () => {
+      const particleCount = Math.min(60, Math.floor(window.innerWidth / 30));
+      particles.current = [];
+      
+      for (let i = 0; i < particleCount; i++) {
+        particles.current.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2 + 1,
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.3 + 0.1,
+          connections: []
+        });
+      }
+    };
+    
+    createParticles();
+    
+    // Update mouse position
+    const unsubscribeMouseX = mouseX.onChange(value => {
+      mousePos.current.x = value;
+    });
+    const unsubscribeMouseY = mouseY.onChange(value => {
+      mousePos.current.y = value;
+    });
+    
+    // Animation loop
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Update particle positions
+      particles.current.forEach(p => {
+        // Mouse interaction - particles avoid mouse
+        const dx = mousePos.current.x - p.x;
+        const dy = mousePos.current.y - p.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < 150) {
+          const angle = Math.atan2(dy, dx);
+          const force = (150 - distance) / 150 * 0.5;
+          p.x -= Math.cos(angle) * force;
+          p.y -= Math.sin(angle) * force;
+        }
+        
+        // Normal movement
+        p.x += p.speedX;
+        p.y += p.speedY;
+        
+        // Wrap around edges
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+      });
+      
+      // Draw connections
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 0.5;
+      
+      for (let i = 0; i < particles.current.length; i++) {
+        for (let j = i + 1; j < particles.current.length; j++) {
+          const p1 = particles.current[i];
+          const p2 = particles.current[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 120) {
+            const opacity = (1 - distance / 120) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(37, 99, 235, ${opacity})`;
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // Draw particles
+      particles.current.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(37, 99, 235, ${p.opacity})`;
+        ctx.fill();
+      });
+      
+      animationFrame.current = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      unsubscribeMouseX();
+      unsubscribeMouseY();
+      cancelAnimationFrame(animationFrame.current);
+    };
+  }, [mouseX, mouseY]);
+
+  return (
+    <canvas 
+      ref={canvasRef} 
+      className="absolute inset-0 pointer-events-none z-0"
+      style={{ opacity: 0.8 }}
+    />
+  );
 };
 
 // --- Components ---
@@ -113,7 +369,6 @@ const AboutModal = ({ isOpen, onClose }) => {
           className="fixed inset-0 z-[200] bg-white overflow-y-auto"
         >
           <div className="min-h-screen w-full relative">
-            {/* Only X button - no Back to Home */}
             <button 
               onClick={onClose}
               className="fixed top-8 right-8 z-30 w-10 h-10 rounded-none bg-white border border-slate-200 flex items-center justify-center hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"
@@ -121,11 +376,8 @@ const AboutModal = ({ isOpen, onClose }) => {
               <X size={18} />
             </button>
 
-            {/* Main Content */}
             <div className="w-full max-w-7xl mx-auto px-8 md:px-10 py-28 md:py-36">
-              {/* Grid Layout */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-auto">
-                {/* div1: Photo - spans 1 column, 2 rows on desktop */}
                 <div className="md:col-span-1 md:row-span-2 bg-slate-900 overflow-hidden group h-[350px] md:h-[500px] relative border border-slate-800">
                   <img 
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800" 
@@ -138,7 +390,6 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* div2: Manifesto - spans 2 columns */}
                 <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-center min-h-[220px]">
                   <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-4">Manifesto</span>
                   <p className="text-base md:text-lg font-medium tracking-wide leading-relaxed text-slate-700">
@@ -148,14 +399,12 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </p>
                 </div>
 
-                {/* div3: Location */}
                 <div className="bg-blue-50 border-2 border-blue-200 p-8 md:p-10 flex flex-col items-start justify-center min-h-[180px]">
                   <Globe size={24} className="text-blue-600 mb-4" />
                   <span className="text-[8px] uppercase tracking-[0.2em] text-slate-500 mb-1.5 font-bold">Node Location</span>
                   <span className="font-mono text-lg md:text-xl text-slate-900">11.01°N, 76.95°E</span>
                 </div>
 
-                {/* div4: Build Version */}
                 <div className="bg-blue-600 border-2 border-blue-700 p-8 md:p-10 flex flex-col justify-between min-h-[180px]">
                   <Zap className="text-white/90" size={28} />
                   <div>
@@ -164,7 +413,6 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* div5: Tech Stack/Tools Carousel */}
                 <div className="md:col-span-2 bg-white border-2 border-slate-200 p-8 md:p-10 overflow-hidden min-h-[180px]">
                   <div className="flex items-center gap-2 mb-6">
                     <Terminal size={18} className="text-blue-600" />
@@ -172,11 +420,9 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                   <div className="overflow-hidden relative">
                     <div className="flex gap-3 animate-scroll whitespace-nowrap">
-                      {/* First set */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                         <span key={s} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
-                      {/* Duplicate for seamless loop */}
                       {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                         <span key={`${s}-2`} className="inline-block px-4 py-2 bg-slate-900 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border border-slate-700">{s}</span>
                       ))}
@@ -184,13 +430,11 @@ const AboutModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* div6: Code Philosophy */}
                 <div className="bg-slate-50 border-2 border-slate-200 p-8 md:p-10 flex flex-col justify-between min-h-[180px]">
                   <Code size={24} className="text-slate-500" />
                   <p className="text-[10px] md:text-xs font-mono text-slate-600 leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
                 </div>
 
-                {/* div7: System Status - spans full width */}
                 <div className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 border-2 border-slate-700 p-5 md:p-6 flex items-center justify-between">
                   <span className="text-blue-400 font-mono text-sm md:text-base flex items-center gap-3">
                     <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
@@ -225,7 +469,7 @@ const AboutModal = ({ isOpen, onClose }) => {
     </AnimatePresence>
   );
 };
-// --- Modal 2: Inspirations (Stacking Scroll) ---
+
 const InspirationsModal = ({ isOpen, onClose }) => {
   const figures = [
     {
@@ -283,7 +527,6 @@ const InspirationsModal = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* Sticky controls */}
             <div className="fixed top-8 right-8 z-[210]">
               <button 
                 onClick={onClose}
@@ -306,21 +549,18 @@ const InspirationCard = ({ figure, index, total }) => {
     offset: ["start end", "end start"]
   });
 
-  // Scale: start at 0.95, reach 1, then stay at 1
   const scale = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
     [0.95, 1, 1, 0.95]
   );
 
-  // Y position: slight movement
   const y = useTransform(
     scrollYProgress, 
     [0, 0.5, 1], 
     [30, 0, -30]
   );
 
-  // Subtle opacity change - never go below 0.9
   const opacity = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
@@ -366,6 +606,7 @@ const InspirationCard = ({ figure, index, total }) => {
     </motion.div>
   );
 };
+
 const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { scrollY } = useScroll();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -378,14 +619,12 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   const isExpanded = !isScrolled || isHovered;
 
-  // Close mobile menu when clicking a link
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
 
   return (
     <>
-      {/* Desktop Navbar - with "About" instead of "Admin" */}
       <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
         <motion.nav 
           onMouseEnter={() => setIsHovered(true)}
@@ -436,10 +675,8 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </motion.nav>
       </div>
 
-      {/* Mobile Navbar - Small and centered */}
       <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 md:hidden">
         <div className="flex items-center justify-between w-auto min-w-[200px] px-4 py-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-sm shadow-sm">
-          {/* Name */}
           <button 
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
             className="text-sm font-bold text-slate-900 font-mono tracking-tight mr-4"
@@ -447,7 +684,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
             Ellen
           </button>
 
-          {/* Menu Icon */}
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="w-8 h-8 flex flex-col items-center justify-center gap-1 hover:bg-slate-100 rounded-sm transition-colors"
@@ -458,7 +694,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
           </button>
         </div>
 
-        {/* Mobile Menu Dropdown */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -515,7 +750,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </AnimatePresence>
       </div>
 
-      {/* Overlay for mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
@@ -533,34 +767,21 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
 const Hero = ({ onOpenAbout }) => {
   const { mouseX, mouseY } = useMousePosition();
-  const spotlightX = useSpring(mouseX, { stiffness: 100, damping: 20 });
-  const spotlightY = useSpring(mouseY, { stiffness: 100, damping: 20 });
   
-  // Typewriter words
   const words = ["STABLE_LOGIC", "ZERO_LATENCY", "QUANTUM_CODING", "NEURAL_LINK", "EDGE_COMPUTE", "CLOUD_NATIVE", "DEEP_LEARN"];
   const typewriterText = useTypewriter(words, 120, 60, 2000);
 
   return (
     <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden bg-white text-center px-6 pt-0 md:pt-20">
-      {/* Top blue blur blob - mobile only, near navbar */}
-      <div className="absolute top-[-50px] left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-blue-500/20 rounded-full blur-[60px] z-0 md:hidden" />
+      {/* Particle Background */}
+      <ParticleBackground />
       
-      {/* Subtle blue blur blob - always visible */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-blue-600/10 rounded-full blur-[80px] md:blur-[160px] z-0" />
+      {/* Subtle blue blur blob */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[900px] h-[300px] md:h-[900px] bg-blue-600/5 rounded-full blur-[80px] md:blur-[160px] z-0" />
       
       {/* Grid pattern overlay */}
-      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
         style={{ backgroundImage: 'radial-gradient(#2563eb 0.5px, transparent 0.5px)', backgroundSize: '32px 32px' }} />
-
-      {/* Mouse-following blobs - desktop only */}
-      <motion.div 
-        style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
-        className="pointer-events-none absolute w-[500px] md:w-[900px] h-[500px] md:h-[900px] bg-blue-600/20 rounded-full blur-[120px] md:blur-[160px] z-0 hidden md:block"
-      />
-      <motion.div 
-        style={{ left: spotlightX, top: spotlightY, transform: 'translate(-50%, -50%)' }}
-        className="pointer-events-none absolute w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-blue-400/30 rounded-full blur-[60px] md:blur-[100px] z-0 hidden md:block"
-      />
 
       <div className="relative z-10 max-w-7xl mt-[-5vh] md:mt-0">
         <motion.div
@@ -643,7 +864,6 @@ const ProjectItem = ({ project, index }) => {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
       className="relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 border-slate-200 bg-white shadow-2xl shadow-blue-900/10 hover:border-blue-500 transition-colors duration-500"
     >
-      {/* Visual Outline Overlay */}
       <div className="absolute inset-2 border border-slate-100 pointer-events-none group-hover:border-blue-100 transition-colors duration-500" />
       
       <motion.div 
@@ -713,7 +933,6 @@ const PhilosophySection = ({ onOpenAbout }) => {
             <p className="text-4xl md:text-6xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
               Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
             </p>
-            {/* More About Me Button */}
             <motion.button
               onClick={onOpenAbout}
               initial={{ opacity: 0, y: 20 }}
@@ -818,105 +1037,6 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   );
 };
 
-const App = () => {
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
-  
-  const projects = [
-    { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
-    { title: "QUBIT", tags: ["Go", "React"], description: "Visual debugger for quantum circuit execution and state monitoring." },
-    { title: "SHARD", tags: ["Rust", "Wasm"], description: "Distributed file storage protocol with sub-millisecond propagation." },
-    { title: "KINETIC", tags: ["Swift", "ThreeJS"], description: "Motion-sensitive architectural visualization using volumetric rendering." },
-  ];
-
-  return (
-    <div className="bg-white min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
-      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
-      
-      <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
-      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-      <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
-      
-      <Hero onOpenAbout={() => setIsAboutOpen(true)} />
-
-      <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-100 pb-12 gap-8">
-          <div>
-            <h2 className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold text-blue-600 mb-4 md:mb-6 font-mono">Stack // 2026</h2>
-            <p className="text-3xl md:text-4xl font-bold tracking-tighter">Verified Deployments</p>
-          </div>
-          <span className="text-[8px] md:text-[10px] text-slate-300 uppercase tracking-[0.4em] font-bold font-mono">Status: Online</span>
-        </div>
-        
-        <div className="space-y-[6vh] md:space-y-[10vh]">
-          {projects.map((p, i) => (
-            <ProjectItem key={p.title} project={p} index={i} />
-          ))}
-        </div>
-      </section>
-
-      <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
-
-      <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden bg-white pt-20">
-        <div className="text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-10 md:mb-12 mt-20 md:mt-24"
-          >
-            <span className="px-6 md:px-10 py-3 md:py-4 bg-slate-900 text-[8px] md:text-[9px] uppercase tracking-[0.6em] text-blue-400 font-bold font-mono shadow-sm">Connection: Listening</span>
-          </motion.div>
-          
-          <h2 className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] text-slate-900 uppercase">
-            Execute <br className="hidden md:block" /> <span className="text-blue-600 italic font-mono">Command.</span>
-          </h2>
-          
-          <div className="pb-20 md:pb-0">
-            <MagneticButton className="px-12 md:px-20 py-6 md:py-10 bg-blue-600 text-white font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] hover:bg-slate-900 transition-all shadow-2xl">
-               Initiate Thread <ArrowRight size={18} className="ml-3 md:ml-4 inline" />
-            </MagneticButton>
-          </div>
-        </div>
-      </section>
-
-      <Footer 
-        onOpenInspirations={() => setIsInspirationsOpen(true)} 
-        onOpenAbout={() => setIsAboutOpen(true)} 
-      />
-
-      <style>{`
-        * { cursor: none; scroll-behavior: smooth; }
-        @media (max-width: 1024px) {
-          * { cursor: auto !important; }
-          .cursor-follow { display: none !important; }
-        }
-        body { background: #ffffff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        .signature { font-family: 'Great Vibes', cursive; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .cursor-follow {
-          position: fixed;
-          width: 6px;
-          height: 6px;
-          background: #2563eb;
-          pointer-events: none;
-          z-index: 9999;
-          box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
-        }
-        
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: #ffffff; }
-        ::-webkit-scrollbar-thumb { background: #2563eb; }
-      `}</style>
-      
-      <CursorFollower />
-    </div>
-  );
-};
-
 const CursorFollower = () => {
   const { mouseX, mouseY } = useMousePosition();
   const springX = useSpring(mouseX, { stiffness: 1000, damping: 60 });
@@ -929,5 +1049,113 @@ const CursorFollower = () => {
     />
   );
 }
+
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
+  
+  const projects = [
+    { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
+    { title: "QUBIT", tags: ["Go", "React"], description: "Visual debugger for quantum circuit execution and state monitoring." },
+    { title: "SHARD", tags: ["Rust", "Wasm"], description: "Distributed file storage protocol with sub-millisecond propagation." },
+    { title: "KINETIC", tags: ["Swift", "ThreeJS"], description: "Motion-sensitive architectural visualization using volumetric rendering." },
+  ];
+
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        {isLoading && (
+          <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />
+        )}
+      </AnimatePresence>
+
+      <div className="bg-white min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden">
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+        
+        <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
+        <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+        <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
+        
+        <Hero onOpenAbout={() => setIsAboutOpen(true)} />
+
+        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-100 pb-12 gap-8">
+            <div>
+              <h2 className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold text-blue-600 mb-4 md:mb-6 font-mono">Stack // 2026</h2>
+              <p className="text-3xl md:text-4xl font-bold tracking-tighter">Verified Deployments</p>
+            </div>
+            <span className="text-[8px] md:text-[10px] text-slate-300 uppercase tracking-[0.4em] font-bold font-mono">Status: Online</span>
+          </div>
+          
+          <div className="space-y-[6vh] md:space-y-[10vh]">
+            {projects.map((p, i) => (
+              <ProjectItem key={p.title} project={p} index={i} />
+            ))}
+          </div>
+        </section>
+
+        <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
+
+        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden bg-white pt-20">
+          <div className="text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-10 md:mb-12 mt-20 md:mt-24"
+            >
+              <span className="px-6 md:px-10 py-3 md:py-4 bg-slate-900 text-[8px] md:text-[9px] uppercase tracking-[0.6em] text-blue-400 font-bold font-mono shadow-sm">Connection: Listening</span>
+            </motion.div>
+            
+            <h2 className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] text-slate-900 uppercase">
+              Execute <br className="hidden md:block" /> <span className="text-blue-600 italic font-mono">Command.</span>
+            </h2>
+            
+            <div className="pb-20 md:pb-0">
+              <MagneticButton className="px-12 md:px-20 py-6 md:py-10 bg-blue-600 text-white font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] hover:bg-slate-900 transition-all shadow-2xl">
+                 Initiate Thread <ArrowRight size={18} className="ml-3 md:ml-4 inline" />
+              </MagneticButton>
+            </div>
+          </div>
+        </section>
+
+        <Footer 
+          onOpenInspirations={() => setIsInspirationsOpen(true)} 
+          onOpenAbout={() => setIsAboutOpen(true)} 
+        />
+
+        <style>{`
+          * { cursor: none; scroll-behavior: smooth; }
+          @media (max-width: 1024px) {
+            * { cursor: auto !important; }
+            .cursor-follow { display: none !important; }
+          }
+          body { background: #ffffff; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+          .font-mono { font-family: 'JetBrains Mono', monospace; }
+          .signature { font-family: 'Great Vibes', cursive; }
+          .scrollbar-hide::-webkit-scrollbar { display: none; }
+          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+          
+          .cursor-follow {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: #2563eb;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
+          }
+          
+          ::-webkit-scrollbar { width: 3px; }
+          ::-webkit-scrollbar-track { background: #ffffff; }
+          ::-webkit-scrollbar-thumb { background: #2563eb; }
+        `}</style>
+        
+        <CursorFollower />
+      </div>
+    </>
+  );
+};
 
 export default App;
