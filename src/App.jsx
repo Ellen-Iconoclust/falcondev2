@@ -1371,7 +1371,7 @@ const ProjectItem = ({ project, index }) => {
   );
 };
 
-// --- Philosophy Section with Scroll Reveal Animation ---
+// --- Philosophy Section with Scroll Reveal Animation (Fixed) ---
 const PhilosophySection = ({ onOpenAbout }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({ 
@@ -1384,6 +1384,13 @@ const PhilosophySection = ({ onOpenAbout }) => {
   // Split text for scroll reveal
   const text = "I Believe Reliability is the Highest form of Interface";
   const words = text.split(" ");
+
+  // Create an array of progress values for each word
+  const wordProgress = words.map((_, i) => {
+    const start = i / words.length;
+    const end = (i + 1) / words.length;
+    return useTransform(scrollYProgress, [start, end], [0, 1]);
+  });
 
   return (
     <section ref={container} id="protocol" className="py-24 md:py-52 overflow-hidden relative border-y bg-slate-900 border-white/5">
@@ -1411,32 +1418,23 @@ const PhilosophySection = ({ onOpenAbout }) => {
               Core Protocols
             </motion.h3>
             
-            {/* Scroll Reveal Text */}
+            {/* Scroll Reveal Text - Only activates when section is in view */}
             <div className="text-3xl md:text-5xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
-              {words.map((word, i) => {
-                const start = i / words.length;
-                const end = (i + 1) / words.length;
-                
-                return (
-                  <motion.span
-                    key={i}
-                    className="inline-block mr-2"
-                    style={{
-                      color: useTransform(
-                        scrollYProgress,
-                        [start, end],
-                        ["rgba(255,255,255,0.1)", "rgba(255,255,255,1)"]
-                      )
-                    }}
-                  >
-                    {word === "Interface" ? (
-                      <span className="text-blue-600 italic font-mono">Interface</span>
-                    ) : (
-                      word
-                    )}
-                  </motion.span>
-                );
-              })}
+              {words.map((word, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block mr-2"
+                  style={{
+                    opacity: wordProgress[i]
+                  }}
+                >
+                  {word === "Interface" ? (
+                    <span className="text-blue-600 italic font-mono">Interface</span>
+                  ) : (
+                    word
+                  )}
+                </motion.span>
+              ))}
             </div>
 
             <motion.button
@@ -1765,7 +1763,7 @@ const App = () => {
           </div>
         </section>
 
-        {/* Philosophy Section with Scroll Reveal */}
+        {/* Philosophy Section with Fixed Scroll Reveal */}
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
         {/* Root section - adapts to theme */}
