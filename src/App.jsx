@@ -1164,7 +1164,7 @@ const Hero = () => {
       </div>
 
       {/* Right Side - Email */}
-      <div className="fixed right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+      <div className="fixed right-8 lg:right-12 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
         <div className="flex flex-col items-center gap-4">
           <a 
             href="mailto:ellen@example.com" 
@@ -1187,6 +1187,7 @@ const Hero = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.6 }}
+              className="mb-4"
             >
               <AnimatedLetters 
                 text="Hi There !"
@@ -1196,7 +1197,7 @@ const Hero = () => {
               />
               <AnimatedLetters 
                 text="I'm Ellen"
-                className={`text-6xl md:text-8xl font-bold block mt-4 ${
+                className={`text-6xl md:text-8xl font-bold block mt-2 ${
                   isDark ? 'text-blue-400' : 'text-blue-600'
                 }`}
                 delay={0.05}
@@ -1210,7 +1211,7 @@ const Hero = () => {
               transition={{ duration: 0.6 }}
             >
               <motion.span 
-                className={`px-4 md:px-8 py-2 md:py-3 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] font-bold font-mono inline-block mb-8 ${
+                className={`px-4 md:px-8 py-2 md:py-3 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] font-bold font-mono inline-block mb-6 ${
                   isDark 
                     ? 'bg-slate-800 text-blue-400' 
                     : 'bg-slate-900 text-blue-400'
@@ -1229,7 +1230,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="h-[150px] md:h-[200px] flex items-center justify-center"
+              className="h-[100px] md:h-[120px] flex items-center justify-center"
             >
               <AnimatePresence mode="wait">
                 {isVisible && (
@@ -1242,7 +1243,7 @@ const Hero = () => {
                   >
                     <AnimatedLetters 
                       text={currentRole}
-                      className={`text-3xl md:text-5xl font-bold ${
+                      className={`text-2xl md:text-4xl font-bold ${
                         isDark ? 'text-white' : 'text-slate-900'
                       }`}
                       delay={0.02}
@@ -1624,6 +1625,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
+  const { isDark } = useTheme();
   
   const projects = [
     { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
@@ -1708,7 +1710,7 @@ const App = () => {
 
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
           <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b pb-12 gap-8 ${
-            isInspirationsOpen ? 'border-slate-800' : 'border-slate-200 dark:border-slate-800'
+            isDark ? 'border-slate-800' : 'border-slate-200'
           }`}>
             <div>
               <motion.h2 
@@ -1722,9 +1724,7 @@ const App = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className={`text-3xl md:text-4xl font-bold tracking-tighter ${
-                  isInspirationsOpen ? 'text-white' : 'text-slate-900 dark:text-white'
-                }`}
+                className="text-3xl md:text-4xl font-bold tracking-tighter"
               >
                 Verified Deployments
               </motion.p>
@@ -1734,7 +1734,7 @@ const App = () => {
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
               className={`text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono ${
-                isInspirationsOpen ? 'text-slate-600' : 'text-slate-400 dark:text-slate-600'
+                isDark ? 'text-slate-600' : 'text-slate-400'
               }`}
             >
               Status: Online
@@ -1751,7 +1751,7 @@ const App = () => {
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
         <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 ${
-          isInspirationsOpen ? 'bg-slate-900' : 'bg-white dark:bg-slate-900'
+          isDark ? 'bg-slate-900' : 'bg-white'
         }`}>
           <div className="text-center relative z-10">
             <motion.div
@@ -1763,9 +1763,9 @@ const App = () => {
               <motion.span 
                 whileHover={{ scale: 1.05 }}
                 className={`px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block ${
-                  isInspirationsOpen 
+                  isDark 
                     ? 'bg-slate-800 text-blue-400' 
-                    : 'bg-slate-900 dark:bg-slate-800 text-blue-400'
+                    : 'bg-slate-900 text-blue-400'
                 }`}
               >
                 Connection: Listening
@@ -1777,7 +1777,7 @@ const App = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
               className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase ${
-                isInspirationsOpen ? 'text-white' : 'text-slate-900 dark:text-white'
+                isDark ? 'text-white' : 'text-slate-900'
               }`}
             >
               Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
