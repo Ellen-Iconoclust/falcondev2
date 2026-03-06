@@ -1203,19 +1203,21 @@ const Hero = () => {
           />
         </motion.div>
 
+        {/* I'm Ellen with only Ellen in Allura font */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           className="mb-8"
         >
-          <AnimatedLetters 
-            text="I'm Ellen"
-            className={`text-6xl md:text-8xl font-bold block ${
-              isDark ? 'text-blue-400' : 'text-blue-600'
-            }`}
-            delay={0.05}
-          />
+          <span className={`text-6xl md:text-8xl font-bold block ${
+            isDark ? 'text-blue-400' : 'text-blue-600'
+          }`}>
+            I'm{' '}
+            <span className="font-allura">
+              Ellen
+            </span>
+          </span>
         </motion.div>
 
         {/* Role carousel - smaller font */}
@@ -1591,7 +1593,7 @@ const App = () => {
     <ThemeProvider>
       <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-300">
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&family=Allura&display=swap');
           
           * {
             margin: 0;
@@ -1606,6 +1608,10 @@ const App = () => {
           
           .font-mono {
             font-family: 'JetBrains Mono', monospace;
+          }
+          
+          .font-allura {
+            font-family: 'Allura', cursive;
           }
           
           .signature {
