@@ -1714,7 +1714,8 @@ const App = () => {
         
         <Hero />
 
-        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
+        {/* Fixed: Added explicit background to match theme */}
+        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white dark:bg-slate-900">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 dark:border-slate-800 pb-12 gap-8">
             <div>
               <motion.h2 
