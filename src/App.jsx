@@ -1118,7 +1118,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 // --- Hero Section ---
 const Hero = () => {
   const { isDark } = useTheme();
-  const [showGreeting, setShowGreeting] = useState(true);
   
   const roles = [
     "Front-End Developer",
@@ -1130,14 +1129,6 @@ const Hero = () => {
   ];
   
   const { text: currentRole, isVisible } = useTextSequence(roles, 2500);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowGreeting(false);
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <section className={`relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-300 px-6 ${
@@ -1179,81 +1170,76 @@ const Hero = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl text-center">
-        <AnimatePresence mode="wait">
-          {showGreeting ? (
-            <motion.div
-              key="greeting"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.6 }}
-              className="mb-4"
-            >
-              <AnimatedLetters 
-                text="Hi There !"
-                className={`text-5xl md:text-7xl font-bold block ${
-                  isDark ? 'text-white' : 'text-black'
-                }`}
-              />
-              <AnimatedLetters 
-                text="I'm Ellen"
-                className={`text-6xl md:text-8xl font-bold block mt-2 ${
-                  isDark ? 'text-blue-400' : 'text-blue-600'
-                }`}
-                delay={0.05}
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="roles"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-            >
-              <motion.span 
-                className={`px-4 md:px-8 py-2 md:py-3 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] font-bold font-mono inline-block mb-6 ${
-                  isDark 
-                    ? 'bg-slate-800 text-blue-400' 
-                    : 'bg-slate-900 text-blue-400'
-                }`}
-              >
-                &lt; DEV_PORTFOLIO /&gt; V2.6
-              </motion.span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* DEV_PORTFOLIO tag - always visible */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-6"
+        >
+          <motion.span 
+            className={`px-4 md:px-8 py-2 md:py-3 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] font-bold font-mono inline-block ${
+              isDark 
+                ? 'bg-slate-800 text-blue-400' 
+                : 'bg-slate-900 text-blue-400'
+            }`}
+          >
+            &lt; DEV_PORTFOLIO /&gt; V2.6
+          </motion.span>
+        </motion.div>
 
-        <AnimatePresence mode="wait">
-          {!showGreeting && (
-            <motion.div
-              key="role-text"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="h-[100px] md:h-[120px] flex items-center justify-center"
-            >
-              <AnimatePresence mode="wait">
-                {isVisible && (
-                  <motion.div
-                    key={currentRole}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -50 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <AnimatedLetters 
-                      text={currentRole}
-                      className={`text-2xl md:text-4xl font-bold ${
-                        isDark ? 'text-white' : 'text-black'
-                      }`}
-                      delay={0.02}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Permanent greeting */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-4"
+        >
+          <AnimatedLetters 
+            text="Hi There !"
+            className={`text-5xl md:text-7xl font-bold block ${
+              isDark ? 'text-white' : 'text-black'
+            }`}
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mb-8"
+        >
+          <AnimatedLetters 
+            text="I'm Ellen"
+            className={`text-6xl md:text-8xl font-bold block ${
+              isDark ? 'text-blue-400' : 'text-blue-600'
+            }`}
+            delay={0.05}
+          />
+        </motion.div>
+
+        {/* Role carousel - smaller font */}
+        <div className="h-[60px] md:h-[80px] flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            {isVisible && (
+              <motion.div
+                key={currentRole}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <AnimatedLetters 
+                  text={currentRole}
+                  className={`text-lg md:text-2xl font-bold ${
+                    isDark ? 'text-white/80' : 'text-black/80'
+                  }`}
+                  delay={0.02}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </section>
   );
