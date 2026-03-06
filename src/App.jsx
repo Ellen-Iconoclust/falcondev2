@@ -1453,7 +1453,7 @@ const PhilosophySection = ({ onOpenAbout }) => {
   );
 };
 
-// --- Footer (always white) ---
+// --- Footer (adapts to theme) ---
 const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   const [time, setTime] = useState("");
 
@@ -1468,13 +1468,13 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   }, []);
 
   return (
-    <footer className="relative pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t bg-white border-slate-200">
+    <footer className="relative pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-24">
         <div className="md:col-span-2">
           <motion.h2 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="text-3xl md:text-4xl font-bold tracking-tighter mb-6 md:mb-10 text-slate-900"
+            className="text-3xl md:text-4xl font-bold tracking-tighter mb-6 md:mb-10 text-slate-900 dark:text-white"
           >
             ELLEN_STUDIO
             <span className="font-mono text-blue-600">.BIN</span>
@@ -1483,7 +1483,7 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter text-slate-500"
+            className="max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter text-slate-500 dark:text-slate-400"
           >
             Developing the future of digital interaction through code-first methodologies.
           </motion.p>
@@ -1494,7 +1494,7 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
             <motion.h3 
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] mb-6 md:mb-12 font-bold font-mono text-slate-500"
+              className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] mb-6 md:mb-12 font-bold font-mono text-slate-500 dark:text-slate-400"
             >
               {category}
             </motion.h3>
@@ -1511,11 +1511,11 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
                   whileHover={{ x: 5 }}
                 >
                   {i === 'Inspirations' ? (
-                    <button onClick={onOpenInspirations} className="transition-colors uppercase tracking-widest font-mono text-left text-slate-600 hover:text-blue-600">{i}</button>
+                    <button onClick={onOpenInspirations} className="transition-colors uppercase tracking-widest font-mono text-left text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">{i}</button>
                   ) : i === 'About' ? (
-                    <button onClick={onOpenAbout} className="transition-colors uppercase tracking-widest font-mono text-left text-slate-600 hover:text-blue-600">{i}</button>
+                    <button onClick={onOpenAbout} className="transition-colors uppercase tracking-widest font-mono text-left text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">{i}</button>
                   ) : (
-                    <a href="#" className="transition-colors uppercase tracking-widest font-mono text-slate-600 hover:text-blue-600">{i}</a>
+                    <a href="#" className="transition-colors uppercase tracking-widest font-mono text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">{i}</a>
                   )}
                 </motion.li>
               ))}
@@ -1528,11 +1528,11 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
         <div className="flex flex-col items-center md:items-start gap-4">
           <motion.div 
             whileHover={{ scale: 1.05 }}
-            className="signature text-5xl md:text-6xl mb-2 text-slate-900"
+            className="signature text-5xl md:text-6xl mb-2 text-slate-900 dark:text-white"
           >
             Ellen
           </motion.div>
-          <div className="flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono text-slate-500">
+          <div className="flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono text-slate-500 dark:text-slate-400">
             <span>&copy; 2026_STUDIO</span>
             <span>NODE: TN_IN</span>
           </div>
@@ -1541,13 +1541,13 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
         <div className="flex items-center gap-6 md:gap-10">
           <div className="flex flex-col items-end">
             <span className="text-[7px] md:text-[8px] uppercase tracking-[0.4em] font-bold mb-1 font-mono text-blue-600">Local_Time</span>
-            <span className="text-xs md:text-sm font-mono font-bold tracking-widest text-slate-700">{time}</span>
+            <span className="text-xs md:text-sm font-mono font-bold tracking-widest text-slate-700 dark:text-slate-300">{time}</span>
           </div>
           <motion.button
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
             whileHover={{ scale: 1.1, rotate: -45 }}
             whileTap={{ scale: 0.9 }}
-            className="w-12 h-12 md:w-16 md:h-16 border flex items-center justify-center transition-all group border-slate-300 bg-slate-50 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-slate-900"
+            className="w-12 h-12 md:w-16 md:h-16 border flex items-center justify-center transition-all group border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-slate-900 dark:text-white"
           >
             <ArrowUpRight size={20} className="-rotate-45" />
           </motion.button>
@@ -1681,14 +1681,14 @@ const App = () => {
         
         <Hero />
 
-        {/* Verified Deployments - always white */}
-        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 pb-12 gap-8">
+        {/* Verified Deployments - adapts to theme */}
+        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white dark:bg-slate-900">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 dark:border-slate-800 pb-12 gap-8">
             <div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600"
+                className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600 dark:text-blue-400"
               >
                 Stack // 2026
               </motion.h2>
@@ -1696,7 +1696,7 @@ const App = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900"
+                className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900 dark:text-white"
               >
                 Verified Deployments
               </motion.p>
@@ -1705,7 +1705,7 @@ const App = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-500"
+              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-500 dark:text-slate-400"
             >
               Status: Online
             </motion.span>
@@ -1720,8 +1720,8 @@ const App = () => {
 
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
-        {/* Root section - always white */}
-        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 bg-white">
+        {/* Root section - adapts to theme */}
+        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 bg-white dark:bg-slate-900">
           <div className="text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1731,7 +1731,7 @@ const App = () => {
             >
               <motion.span 
                 whileHover={{ scale: 1.05 }}
-                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 text-blue-400"
+                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 dark:bg-slate-800 text-blue-400"
               >
                 Connection: Listening
               </motion.span>
@@ -1741,15 +1741,15 @@ const App = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase text-slate-900"
+              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase text-slate-900 dark:text-white"
             >
-              Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600">Command.</span>
+              Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
             </motion.h2>
             
             <div className="pb-20 md:pb-0">
               <MagneticButton 
                 icon={Rocket}
-                className="px-12 md:px-20 py-6 md:py-10 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all shadow-2xl bg-blue-600 hover:bg-slate-900 text-white"
+                className="px-12 md:px-20 py-6 md:py-10 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all shadow-2xl bg-blue-600 hover:bg-slate-900 dark:hover:bg-slate-800 text-white"
               >
                 Initiate Thread
               </MagneticButton>
