@@ -555,7 +555,7 @@ const AboutModal = ({ isOpen, onClose }) => {
           className={`fixed top-8 right-8 z-30 w-10 h-10 rounded-none border flex items-center justify-center transition-all shadow-sm ${
             isDark 
               ? 'bg-slate-800 border-slate-700 text-white hover:bg-blue-600 hover:border-blue-600' 
-              : 'bg-white border-slate-200 hover:bg-blue-600 hover:text-white hover:border-blue-600'
+              : 'bg-white border-slate-200 text-slate-900 hover:bg-blue-600 hover:text-white hover:border-blue-600'
           }`}
         >
           <X size={18} />
@@ -663,11 +663,13 @@ const AboutModal = ({ isOpen, onClose }) => {
               className={`border-2 p-8 md:p-10 flex flex-col justify-between min-h-[180px] ${
                 isDark 
                   ? 'bg-slate-800 border-slate-700 text-white' 
-                  : 'bg-slate-50 border-slate-200'
+                  : 'bg-slate-50 border-slate-200 text-slate-700'
               }`}
             >
-              <Code size={24} className={isDark ? 'text-slate-400' : 'text-slate-500'} />
-              <p className="text-[10px] md:text-xs font-mono leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
+              <Code size={24} className={isDark ? 'text-slate-400' : 'text-slate-700'} />
+              <p className={`text-[10px] md:text-xs font-mono leading-relaxed uppercase tracking-wider ${
+                isDark ? 'text-white' : 'text-slate-700'
+              }`}>// code is poetry<br/>optimized for performance</p>
             </motion.div>
 
             <motion.div 
@@ -908,11 +910,15 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
             backgroundColor: isScrolled 
               ? (isDark ? 'rgba(15, 23, 42, 0.98)' : 'rgba(255, 255, 255, 0.98)')
               : (isDark ? 'rgba(30, 41, 59, 0.85)' : 'rgba(248, 250, 252, 0.85)'),
+            boxShadow: isScrolled 
+              ? (isDark ? '0 20px 40px rgba(0,0,0,0.3)' : '0 20px 40px rgba(0,0,0,0.08)')
+              : '0 4px 20px rgba(0,0,0,0.01)',
+            borderColor: isScrolled 
+              ? (isDark ? 'rgba(96, 165, 250, 0.3)' : 'rgba(37, 99, 235, 0.4)')
+              : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15, 23, 42, 0.2)')
           }}
           transition={{ type: "spring", stiffness: 350, damping: 35 }}
-          className={`pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl items-center justify-center overflow-hidden hidden md:flex ${
-            isDark ? 'border-slate-700' : 'border-slate-200'
-          }`}
+          className={`pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl items-center justify-center overflow-hidden hidden md:flex`}
         >
           <AnimatePresence mode="wait">
             {isExpanded ? (
@@ -1144,7 +1150,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className={`relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-300 text-center px-6 ${
+    <section className={`relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-300 px-6 ${
       isDark ? 'bg-slate-900' : 'bg-white'
     }`}>
       <ParticleBackground />
@@ -1156,7 +1162,33 @@ const Hero = () => {
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
         style={{ backgroundImage: `radial-gradient(${isDark ? '#60a5fa' : '#2563eb'} 0.5px, transparent 0.5px)`, backgroundSize: '32px 32px' }} />
 
-      <div className="relative z-10 max-w-7xl">
+      {/* Left Side - Social Icons */}
+      <div className="fixed left-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+        <div className="flex flex-col items-center gap-6">
+          <AnimatedIcon icon={Github} size={20} href="https://github.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
+          <AnimatedIcon icon={Linkedin} size={20} href="https://linkedin.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
+          <AnimatedIcon icon={Mail} size={20} href="mailto:ellen@example.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
+          <AnimatedIcon icon={Coffee} size={20} href="#" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
+          <div className={`w-[1px] h-16 mt-2 ${isDark ? 'bg-slate-700' : 'bg-slate-300'}`} />
+        </div>
+      </div>
+
+      {/* Right Side - Email */}
+      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+        <div className="flex flex-col items-center gap-4">
+          <a 
+            href="mailto:ellen@example.com" 
+            className={`text-[10px] font-mono tracking-[0.3em] rotate-90 origin-center whitespace-nowrap transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+              isDark ? 'text-slate-400' : 'text-slate-600'
+            }`}
+          >
+            ellen@example.com
+          </a>
+          <div className={`w-[1px] h-16 ${isDark ? 'bg-slate-700' : 'bg-slate-300'}`} />
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl text-center">
         <AnimatePresence mode="wait">
           {showGreeting ? (
             <motion.div
@@ -1165,17 +1197,16 @@ const Hero = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -50 }}
               transition={{ duration: 0.6 }}
-              className="mb-6 md:mb-14"
             >
               <AnimatedLetters 
                 text="Hi There !"
-                className={`text-4xl md:text-7xl font-bold block ${
+                className={`text-5xl md:text-7xl font-bold block ${
                   isDark ? 'text-white' : 'text-slate-900'
                 }`}
               />
               <AnimatedLetters 
                 text="I'm Ellen"
-                className={`text-5xl md:text-8xl font-bold block mt-4 ${
+                className={`text-6xl md:text-8xl font-bold block mt-4 ${
                   isDark ? 'text-blue-400' : 'text-blue-600'
                 }`}
                 delay={0.05}
@@ -1187,10 +1218,9 @@ const Hero = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
-              className="mb-6 md:mb-14"
             >
               <motion.span 
-                className={`px-4 md:px-8 py-2 md:py-3 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] font-bold font-mono inline-block ${
+                className={`px-4 md:px-8 py-2 md:py-3 text-[8px] md:text-[9px] uppercase tracking-[0.4em] md:tracking-[0.6em] font-bold font-mono inline-block mb-8 ${
                   isDark 
                     ? 'bg-slate-800 text-blue-400' 
                     : 'bg-slate-900 text-blue-400'
@@ -1222,7 +1252,7 @@ const Hero = () => {
                   >
                     <AnimatedLetters 
                       text={currentRole}
-                      className={`text-3xl md:text-6xl font-bold ${
+                      className={`text-3xl md:text-5xl font-bold ${
                         isDark ? 'text-white' : 'text-slate-900'
                       }`}
                       delay={0.02}
@@ -1233,30 +1263,7 @@ const Hero = () => {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="flex justify-center gap-6 mt-12 md:mt-16"
-        >
-          <AnimatedIcon icon={Github} size={24} href="https://github.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
-          <AnimatedIcon icon={Linkedin} size={24} href="https://linkedin.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
-          <AnimatedIcon icon={Mail} size={24} href="mailto:ellen@example.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
-          <AnimatedIcon icon={Coffee} size={24} href="#" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
-        </motion.div>
       </div>
-
-      <motion.div 
-        animate={{ y: [0, 10, 0] }} 
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-10 md:bottom-16 flex flex-col items-center gap-4"
-      >
-        <div className={`w-[1px] h-10 md:h-16 ${isDark ? 'bg-blue-900' : 'bg-blue-100'}`} />
-        <span className={`text-[7px] md:text-[8px] uppercase tracking-[0.5em] font-bold ${
-          isDark ? 'text-blue-400' : 'text-blue-600'
-        }`}>Scroll Output</span>
-      </motion.div>
     </section>
   );
 };
@@ -1594,7 +1601,7 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
             className={`w-12 h-12 md:w-16 md:h-16 border flex items-center justify-center transition-all group ${
               isDark 
                 ? 'border-slate-700 bg-slate-800 hover:bg-blue-600 hover:border-blue-600 text-white' 
-                : 'border-slate-300 bg-slate-50 hover:bg-blue-600 hover:text-white hover:border-blue-600'
+                : 'border-slate-300 bg-slate-50 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-slate-900'
             }`}
           >
             <ArrowUpRight size={20} className="-rotate-45" />
@@ -1731,7 +1738,7 @@ const App = () => {
 
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
           <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b pb-12 gap-8 ${
-            isInspirationsOpen ? 'border-slate-800' : 'border-slate-100 dark:border-slate-800'
+            isDark ? 'border-slate-800' : 'border-slate-200'
           }`}>
             <div>
               <motion.h2 
@@ -1745,7 +1752,9 @@ const App = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-3xl md:text-4xl font-bold tracking-tighter"
+                className={`text-3xl md:text-4xl font-bold tracking-tighter ${
+                  isDark ? 'text-white' : 'text-slate-900'
+                }`}
               >
                 Verified Deployments
               </motion.p>
@@ -1754,7 +1763,9 @@ const App = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-300 dark:text-slate-600"
+              className={`text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono ${
+                isDark ? 'text-slate-600' : 'text-slate-400'
+              }`}
             >
               Status: Online
             </motion.span>
@@ -1769,7 +1780,9 @@ const App = () => {
 
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
-        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 bg-white dark:bg-slate-900">
+        <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 ${
+          isDark ? 'bg-slate-900' : 'bg-white'
+        }`}>
           <div className="text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1779,7 +1792,11 @@ const App = () => {
             >
               <motion.span 
                 whileHover={{ scale: 1.05 }}
-                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 dark:bg-slate-800 text-blue-400"
+                className={`px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block ${
+                  isDark 
+                    ? 'bg-slate-800 text-blue-400' 
+                    : 'bg-slate-900 text-blue-400'
+                }`}
               >
                 Connection: Listening
               </motion.span>
@@ -1789,7 +1806,9 @@ const App = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase"
+              className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase ${
+                isDark ? 'text-white' : 'text-slate-900'
+              }`}
             >
               Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
             </motion.h2>
