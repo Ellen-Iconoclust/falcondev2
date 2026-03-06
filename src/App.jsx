@@ -189,7 +189,6 @@ const LoadingScreen = ({ onLoadingComplete }) => {
         isDark ? 'bg-slate-900' : 'bg-white'
       }`}
     >
-      {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-[0.02] pointer-events-none" 
         style={{ 
@@ -314,7 +313,6 @@ const ParticleBackground = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    // Create particles
     const createParticles = () => {
       const particleCount = Math.min(40, Math.floor(window.innerWidth / 40));
       particles.current = [];
@@ -333,7 +331,6 @@ const ParticleBackground = () => {
     
     createParticles();
     
-    // Update mouse position
     const unsubscribeMouseX = mouseX.onChange(value => {
       mousePos.current.x = value;
     });
@@ -341,7 +338,6 @@ const ParticleBackground = () => {
       mousePos.current.y = value;
     });
     
-    // Animation loop
     const animate = () => {
       if (!ctx || !canvas) return;
       
@@ -349,9 +345,7 @@ const ParticleBackground = () => {
       
       const particleColor = isDark ? '#60a5fa' : '#2563eb';
       
-      // Update particle positions
       particles.current.forEach(p => {
-        // Mouse interaction - particles avoid mouse
         if (mousePos.current.x && mousePos.current.y) {
           const dx = mousePos.current.x - p.x;
           const dy = mousePos.current.y - p.y;
@@ -365,18 +359,15 @@ const ParticleBackground = () => {
           }
         }
         
-        // Normal movement
         p.x += p.speedX;
         p.y += p.speedY;
         
-        // Wrap around edges
         if (p.x < 0) p.x = canvas.width;
         if (p.x > canvas.width) p.x = 0;
         if (p.y < 0) p.y = canvas.height;
         if (p.y > canvas.height) p.y = 0;
       });
       
-      // Draw connections
       ctx.strokeStyle = particleColor;
       ctx.lineWidth = 0.3;
       
@@ -400,7 +391,6 @@ const ParticleBackground = () => {
         }
       }
       
-      // Draw particles
       particles.current.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -646,7 +636,7 @@ const AboutModal = ({ isOpen, onClose }) => {
                 <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">Daily Stack</span>
               </div>
               <div className="overflow-hidden relative">
-                <div className="flex gap-3 animate-scroll whitespace-nowrap">
+                <div className="flex gap-3 whitespace-nowrap animate-scroll">
                   {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
                     <span key={s} className={`inline-block px-4 py-2 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border ${
                       isDark ? 'bg-slate-700 border-slate-600' : 'bg-slate-900 border-slate-700'
@@ -1163,7 +1153,7 @@ const Hero = () => {
         style={{ backgroundImage: `radial-gradient(${isDark ? '#60a5fa' : '#2563eb'} 0.5px, transparent 0.5px)`, backgroundSize: '32px 32px' }} />
 
       {/* Left Side - Social Icons */}
-      <div className="fixed left-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+      <div className="fixed left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
         <div className="flex flex-col items-center gap-6">
           <AnimatedIcon icon={Github} size={20} href="https://github.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
           <AnimatedIcon icon={Linkedin} size={20} href="https://linkedin.com" className={isDark ? 'text-slate-400' : 'text-slate-600'} />
@@ -1174,7 +1164,7 @@ const Hero = () => {
       </div>
 
       {/* Right Side - Email */}
-      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
+      <div className="fixed right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 hidden lg:block">
         <div className="flex flex-col items-center gap-4">
           <a 
             href="mailto:ellen@example.com" 
@@ -1649,13 +1639,13 @@ const App = () => {
           @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap');
           
           * {
-            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
           }
           
           body {
             font-family: 'Space Grotesk', sans-serif;
-            margin: 0;
-            padding: 0;
             overflow-x: hidden;
           }
           
@@ -1689,26 +1679,6 @@ const App = () => {
           .animate-scroll:hover {
             animation-play-state: paused;
           }
-          
-          ::-webkit-scrollbar {
-            width: 3px;
-          }
-          
-          ::-webkit-scrollbar-track {
-            background: #ffffff;
-          }
-          
-          ::-webkit-scrollbar-thumb {
-            background: #2563eb;
-          }
-          
-          .dark ::-webkit-scrollbar-track {
-            background: #1e293b;
-          }
-          
-          .dark ::-webkit-scrollbar-thumb {
-            background: #60a5fa;
-          }
         `}</style>
         
         <AnimatePresence mode="wait">
@@ -1738,7 +1708,7 @@ const App = () => {
 
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
           <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b pb-12 gap-8 ${
-            isDark ? 'border-slate-800' : 'border-slate-200'
+            isInspirationsOpen ? 'border-slate-800' : 'border-slate-200 dark:border-slate-800'
           }`}>
             <div>
               <motion.h2 
@@ -1753,7 +1723,7 @@ const App = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 className={`text-3xl md:text-4xl font-bold tracking-tighter ${
-                  isDark ? 'text-white' : 'text-slate-900'
+                  isInspirationsOpen ? 'text-white' : 'text-slate-900 dark:text-white'
                 }`}
               >
                 Verified Deployments
@@ -1764,7 +1734,7 @@ const App = () => {
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
               className={`text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono ${
-                isDark ? 'text-slate-600' : 'text-slate-400'
+                isInspirationsOpen ? 'text-slate-600' : 'text-slate-400 dark:text-slate-600'
               }`}
             >
               Status: Online
@@ -1781,7 +1751,7 @@ const App = () => {
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
         <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 ${
-          isDark ? 'bg-slate-900' : 'bg-white'
+          isInspirationsOpen ? 'bg-slate-900' : 'bg-white dark:bg-slate-900'
         }`}>
           <div className="text-center relative z-10">
             <motion.div
@@ -1793,9 +1763,9 @@ const App = () => {
               <motion.span 
                 whileHover={{ scale: 1.05 }}
                 className={`px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block ${
-                  isDark 
+                  isInspirationsOpen 
                     ? 'bg-slate-800 text-blue-400' 
-                    : 'bg-slate-900 text-blue-400'
+                    : 'bg-slate-900 dark:bg-slate-800 text-blue-400'
                 }`}
               >
                 Connection: Listening
@@ -1807,7 +1777,7 @@ const App = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
               className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase ${
-                isDark ? 'text-white' : 'text-slate-900'
+                isInspirationsOpen ? 'text-white' : 'text-slate-900 dark:text-white'
               }`}
             >
               Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
