@@ -1203,7 +1203,7 @@ const Hero = () => {
           />
         </motion.div>
 
-        {/* I'm Ellen - larger with overlapping Ellen */}
+        {/* I'm Ellen - with larger Ellen only */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1214,7 +1214,7 @@ const Hero = () => {
             isDark ? 'text-blue-400' : 'text-blue-600'
           }`}>
             I'm{' '}
-            <span className="font-allura relative -ml-2 md:-ml-4 inline-block">
+            <span className="font-allura relative -ml-2 md:-ml-4 inline-block text-8xl md:text-[10rem]">
               Ellen
             </span>
           </span>
@@ -1255,7 +1255,7 @@ const Hero = () => {
   );
 };
 
-// --- Project Item with fixed animation timing ---
+// --- Project Item with smoother animation ---
 const ProjectItem = ({ project, index }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -1273,8 +1273,8 @@ const ProjectItem = ({ project, index }) => {
       ref={container}
       initial={{ opacity: 0, y: 100 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+      viewport={{ once: true, amount: 0.2, margin: "-50px" }}
+      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: index * 0.15 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className={`relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 shadow-2xl transition-all duration-500 ${
@@ -1371,11 +1371,19 @@ const ProjectItem = ({ project, index }) => {
   );
 };
 
-// --- Philosophy Section (always dark) - RESTORED ORIGINAL ---
+// --- Philosophy Section with Scroll Reveal Animation ---
 const PhilosophySection = ({ onOpenAbout }) => {
   const container = useRef(null);
-  const { scrollYProgress } = useScroll({ target: container, offset: ["start end", "end start"] });
+  const { scrollYProgress } = useScroll({ 
+    target: container, 
+    offset: ["start end", "end start"] 
+  });
+  
   const xText = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  
+  // Split text for scroll reveal
+  const text = "I Believe Reliability is the Highest form of Interface";
+  const words = text.split(" ");
 
   return (
     <section ref={container} id="protocol" className="py-24 md:py-52 overflow-hidden relative border-y bg-slate-900 border-white/5">
@@ -1402,14 +1410,35 @@ const PhilosophySection = ({ onOpenAbout }) => {
             >
               Core Protocols
             </motion.h3>
-            <motion.p 
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-3xl md:text-5xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8"
-            >
-              Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
-            </motion.p>
+            
+            {/* Scroll Reveal Text */}
+            <div className="text-3xl md:text-5xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8">
+              {words.map((word, i) => {
+                const start = i / words.length;
+                const end = (i + 1) / words.length;
+                
+                return (
+                  <motion.span
+                    key={i}
+                    className="inline-block mr-2"
+                    style={{
+                      color: useTransform(
+                        scrollYProgress,
+                        [start, end],
+                        ["rgba(255,255,255,0.1)", "rgba(255,255,255,1)"]
+                      )
+                    }}
+                  >
+                    {word === "Interface" ? (
+                      <span className="text-blue-600 italic font-mono">Interface</span>
+                    ) : (
+                      word
+                    )}
+                  </motion.span>
+                );
+              })}
+            </div>
+
             <motion.button
               onClick={onOpenAbout}
               initial={{ opacity: 0, y: 20 }}
@@ -1695,24 +1724,24 @@ const App = () => {
         
         <Hero />
 
-        {/* Verified Deployments - fixed animation timing */}
+        {/* Verified Deployments - smoother animation */}
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white dark:bg-slate-900">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 dark:border-slate-800 pb-12 gap-8">
             <div>
               <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
                 className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600 dark:text-blue-400"
               >
                 Stack // 2026
               </motion.h2>
               <motion.p 
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
                 className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900 dark:text-white"
               >
                 Verified Deployments
@@ -1721,8 +1750,8 @@ const App = () => {
             <motion.span 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
               className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-500 dark:text-slate-400"
             >
               Status: Online
@@ -1736,7 +1765,7 @@ const App = () => {
           </div>
         </section>
 
-        {/* Philosophy Section - RESTORED ORIGINAL with dark background and four squares */}
+        {/* Philosophy Section with Scroll Reveal */}
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
         {/* Root section - adapts to theme */}
