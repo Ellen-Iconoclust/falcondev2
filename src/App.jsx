@@ -314,7 +314,6 @@ const ParticleBackground = () => {
     window.addEventListener('resize', resizeCanvas);
     
     const createParticles = () => {
-      // Increased particle count for better visibility
       const particleCount = Math.min(60, Math.floor(window.innerWidth / 30));
       particles.current = [];
       
@@ -322,10 +321,10 @@ const ParticleBackground = () => {
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2.5 + 1, // Slightly larger
+          size: Math.random() * 2.5 + 1,
           speedX: (Math.random() - 0.5) * 0.3,
           speedY: (Math.random() - 0.5) * 0.3,
-          opacity: Math.random() * 0.4 + 0.2, // Range 0.2 to 0.6
+          opacity: Math.random() * 0.4 + 0.2,
         });
       }
     };
@@ -372,7 +371,6 @@ const ParticleBackground = () => {
       ctx.strokeStyle = particleColor;
       ctx.lineWidth = 0.5;
       
-      // Draw connections with increased opacity
       for (let i = 0; i < particles.current.length; i++) {
         for (let j = i + 1; j < particles.current.length; j++) {
           const p1 = particles.current[i];
@@ -382,7 +380,7 @@ const ParticleBackground = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
           
           if (distance < 100) {
-            const opacity = (1 - distance / 100) * 0.2; // Was 0.1, now 0.2
+            const opacity = (1 - distance / 100) * 0.2;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -1269,7 +1267,6 @@ const ProjectItem = ({ project, index }) => {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      // In light mode, background is white; in dark mode, it's slate-900
       className={`relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 shadow-2xl transition-all duration-500 ${
         isDark 
           ? 'border-slate-800 bg-slate-900 hover:border-blue-500' 
@@ -1369,10 +1366,9 @@ const PhilosophySection = ({ onOpenAbout }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({ target: container, offset: ["start end", "end start"] });
   const xText = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const { isDark } = useTheme(); // keep for text colors but background is fixed dark
 
   return (
-    <section ref={container} id="protocol" className={`py-24 md:py-52 overflow-hidden relative border-y bg-slate-900 border-white/5 transition-colors duration-300`}>
+    <section ref={container} id="protocol" className="py-24 md:py-52 overflow-hidden relative border-y bg-slate-900 border-white/5">
       <motion.div style={{ x: xText }} className="flex whitespace-nowrap mb-16 md:mb-24 opacity-10 pointer-events-none">
         <h2 className="text-[20vw] md:text-[15vw] font-mono uppercase tracking-tighter leading-none text-blue-500">
           PERFORMANT &middot; SECURE &middot; ATOMIC &middot; 
@@ -1429,7 +1425,7 @@ const PhilosophySection = ({ onOpenAbout }) => {
               { icon: Layers, label: "Architecture", color: "text-blue-500", bg: "bg-slate-800" },
               { icon: Sparkles, label: "Heuristics", color: "text-white", bg: "bg-blue-600" },
               { icon: Cpu, label: "Compute", color: "text-blue-500", bg: "bg-slate-900" },
-              { icon: Code, label: "Syntax", color: "text-slate-900", bg: "bg-white" }  // Fixed: always dark text on white background
+              { icon: Code, label: "Syntax", color: "text-slate-900", bg: "bg-white" }
             ].map((item, idx) => (
               <motion.div
                 key={idx}
@@ -1457,10 +1453,9 @@ const PhilosophySection = ({ onOpenAbout }) => {
   );
 };
 
-// --- Footer ---
+// --- Footer (always white) ---
 const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   const [time, setTime] = useState("");
-  const { isDark } = useTheme();
 
   useEffect(() => {
     const updateTime = () => {
@@ -1473,30 +1468,22 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
   }, []);
 
   return (
-    <footer className={`relative pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t transition-colors duration-300 ${
-      isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
-    }`}>
+    <footer className="relative pt-24 md:pt-52 pb-10 md:pb-20 px-6 md:px-10 overflow-hidden border-t bg-white border-slate-200">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-24">
         <div className="md:col-span-2">
           <motion.h2 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className={`text-3xl md:text-4xl font-bold tracking-tighter mb-6 md:mb-10 ${
-              isDark ? 'text-white' : 'text-slate-900'
-            }`}
+            className="text-3xl md:text-4xl font-bold tracking-tighter mb-6 md:mb-10 text-slate-900"
           >
             ELLEN_STUDIO
-            <span className={`font-mono ${
-              isDark ? 'text-blue-400' : 'text-blue-600'
-            }`}>.BIN</span>
+            <span className="font-mono text-blue-600">.BIN</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className={`max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter ${
-              isDark ? 'text-slate-400' : 'text-slate-500'
-            }`}
+            className="max-w-sm text-sm md:text-lg leading-relaxed font-mono uppercase tracking-tighter text-slate-500"
           >
             Developing the future of digital interaction through code-first methodologies.
           </motion.p>
@@ -1507,9 +1494,7 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
             <motion.h3 
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className={`text-[8px] md:text-[9px] uppercase tracking-[0.4em] mb-6 md:mb-12 font-bold font-mono ${
-                isDark ? 'text-slate-500' : 'text-slate-500'
-              }`}
+              className="text-[8px] md:text-[9px] uppercase tracking-[0.4em] mb-6 md:mb-12 font-bold font-mono text-slate-500"
             >
               {category}
             </motion.h3>
@@ -1526,17 +1511,11 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
                   whileHover={{ x: 5 }}
                 >
                   {i === 'Inspirations' ? (
-                    <button onClick={onOpenInspirations} className={`transition-colors uppercase tracking-widest font-mono text-left ${
-                      isDark ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'
-                    }`}>{i}</button>
+                    <button onClick={onOpenInspirations} className="transition-colors uppercase tracking-widest font-mono text-left text-slate-600 hover:text-blue-600">{i}</button>
                   ) : i === 'About' ? (
-                    <button onClick={onOpenAbout} className={`transition-colors uppercase tracking-widest font-mono text-left ${
-                      isDark ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'
-                    }`}>{i}</button>
+                    <button onClick={onOpenAbout} className="transition-colors uppercase tracking-widest font-mono text-left text-slate-600 hover:text-blue-600">{i}</button>
                   ) : (
-                    <a href="#" className={`transition-colors uppercase tracking-widest font-mono ${
-                      isDark ? 'text-slate-400 hover:text-blue-400' : 'text-slate-600 hover:text-blue-600'
-                    }`}>{i}</a>
+                    <a href="#" className="transition-colors uppercase tracking-widest font-mono text-slate-600 hover:text-blue-600">{i}</a>
                   )}
                 </motion.li>
               ))}
@@ -1549,15 +1528,11 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
         <div className="flex flex-col items-center md:items-start gap-4">
           <motion.div 
             whileHover={{ scale: 1.05 }}
-            className={`signature text-5xl md:text-6xl mb-2 ${
-              isDark ? 'text-white' : 'text-slate-900'
-            }`}
+            className="signature text-5xl md:text-6xl mb-2 text-slate-900"
           >
             Ellen
           </motion.div>
-          <div className={`flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono ${
-            isDark ? 'text-slate-500' : 'text-slate-500'
-          }`}>
+          <div className="flex gap-6 md:gap-10 text-[8px] uppercase tracking-[0.4em] font-mono text-slate-500">
             <span>&copy; 2026_STUDIO</span>
             <span>NODE: TN_IN</span>
           </div>
@@ -1565,22 +1540,14 @@ const Footer = ({ onOpenInspirations, onOpenAbout }) => {
         
         <div className="flex items-center gap-6 md:gap-10">
           <div className="flex flex-col items-end">
-            <span className={`text-[7px] md:text-[8px] uppercase tracking-[0.4em] font-bold mb-1 font-mono ${
-              isDark ? 'text-blue-400' : 'text-blue-600'
-            }`}>Local_Time</span>
-            <span className={`text-xs md:text-sm font-mono font-bold tracking-widest ${
-              isDark ? 'text-slate-300' : 'text-slate-700'
-            }`}>{time}</span>
+            <span className="text-[7px] md:text-[8px] uppercase tracking-[0.4em] font-bold mb-1 font-mono text-blue-600">Local_Time</span>
+            <span className="text-xs md:text-sm font-mono font-bold tracking-widest text-slate-700">{time}</span>
           </div>
           <motion.button
             onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
             whileHover={{ scale: 1.1, rotate: -45 }}
             whileTap={{ scale: 0.9 }}
-            className={`w-12 h-12 md:w-16 md:h-16 border flex items-center justify-center transition-all group ${
-              isDark 
-                ? 'border-slate-700 bg-slate-800 hover:bg-blue-600 hover:border-blue-600 text-white' 
-                : 'border-slate-300 bg-slate-50 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-slate-900'
-            }`}
+            className="w-12 h-12 md:w-16 md:h-16 border flex items-center justify-center transition-all group border-slate-300 bg-slate-50 hover:bg-blue-600 hover:text-white hover:border-blue-600 text-slate-900"
           >
             <ArrowUpRight size={20} className="-rotate-45" />
           </motion.button>
@@ -1642,7 +1609,7 @@ const App = () => {
           }
           
           .signature {
-            font-family: 'Great Vibes', cursive;
+            font-family: 'Great Vibes', cursive; /* Brittany-style cursive */
           }
           
           .scrollbar-hide::-webkit-scrollbar {
@@ -1714,14 +1681,14 @@ const App = () => {
         
         <Hero />
 
-        {/* Fixed: Added explicit background to match theme */}
-        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white dark:bg-slate-900">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 dark:border-slate-800 pb-12 gap-8">
+        {/* Verified Deployments - always white */}
+        <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 pb-12 gap-8">
             <div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600 dark:text-blue-400"
+                className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600"
               >
                 Stack // 2026
               </motion.h2>
@@ -1729,7 +1696,7 @@ const App = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-3xl md:text-4xl font-bold tracking-tighter"
+                className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900"
               >
                 Verified Deployments
               </motion.p>
@@ -1738,7 +1705,7 @@ const App = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-400 dark:text-slate-600"
+              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-500"
             >
               Status: Online
             </motion.span>
@@ -1753,7 +1720,8 @@ const App = () => {
 
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
-        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 bg-white dark:bg-slate-900">
+        {/* Root section - always white */}
+        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 bg-white">
           <div className="text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1763,7 +1731,7 @@ const App = () => {
             >
               <motion.span 
                 whileHover={{ scale: 1.05 }}
-                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 dark:bg-slate-800 text-blue-400"
+                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 text-blue-400"
               >
                 Connection: Listening
               </motion.span>
@@ -1773,15 +1741,15 @@ const App = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase text-slate-900 dark:text-white"
+              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase text-slate-900"
             >
-              Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
+              Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600">Command.</span>
             </motion.h2>
             
             <div className="pb-20 md:pb-0">
               <MagneticButton 
                 icon={Rocket}
-                className="px-12 md:px-20 py-6 md:py-10 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all shadow-2xl bg-blue-600 hover:bg-slate-900 dark:hover:bg-slate-800 text-white"
+                className="px-12 md:px-20 py-6 md:py-10 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all shadow-2xl bg-blue-600 hover:bg-slate-900 text-white"
               >
                 Initiate Thread
               </MagneticButton>
