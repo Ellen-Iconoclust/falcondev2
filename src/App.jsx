@@ -1375,17 +1375,15 @@ const ProjectItem = ({ project, index }) => {
   );
 };
 
-// --- Philosophy Section ---
+// --- Philosophy Section (always dark) ---
 const PhilosophySection = ({ onOpenAbout }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({ target: container, offset: ["start end", "end start"] });
   const xText = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const { isDark } = useTheme();
+  const { isDark } = useTheme(); // keep for text colors but background is fixed dark
 
   return (
-    <section ref={container} id="protocol" className={`py-24 md:py-52 overflow-hidden relative border-y transition-colors duration-300 ${
-      isDark ? 'bg-slate-900 border-white/5' : 'bg-slate-900 border-white/5'
-    }`}>
+    <section ref={container} id="protocol" className={`py-24 md:py-52 overflow-hidden relative border-y bg-slate-900 border-white/5 transition-colors duration-300`}>
       <motion.div style={{ x: xText }} className="flex whitespace-nowrap mb-16 md:mb-24 opacity-10 pointer-events-none">
         <h2 className="text-[20vw] md:text-[15vw] font-mono uppercase tracking-tighter leading-none text-blue-500">
           PERFORMANT &middot; SECURE &middot; ATOMIC &middot; 
@@ -1442,7 +1440,7 @@ const PhilosophySection = ({ onOpenAbout }) => {
               { icon: Layers, label: "Architecture", color: "text-blue-500", bg: "bg-slate-800" },
               { icon: Sparkles, label: "Heuristics", color: "text-white", bg: "bg-blue-600" },
               { icon: Cpu, label: "Compute", color: "text-blue-500", bg: "bg-slate-900" },
-              { icon: Code, label: "Syntax", color: isDark ? "text-white" : "text-slate-900", bg: "bg-white" }
+              { icon: Code, label: "Syntax", color: "text-slate-900", bg: "bg-white" }  // Fixed: always dark text on white background
             ].map((item, idx) => (
               <motion.div
                 key={idx}
@@ -1450,7 +1448,7 @@ const PhilosophySection = ({ onOpenAbout }) => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className={`p-6 md:p-10 ${item.bg} border ${isDark ? 'border-white/5' : 'border-white/10'} flex flex-col gap-6 md:gap-10 aspect-square justify-between group`}
+                className={`p-6 md:p-10 ${item.bg} border border-white/5 flex flex-col gap-6 md:gap-10 aspect-square justify-between group`}
               >
                 <motion.div
                   whileHover={{ rotate: 360 }}
@@ -1459,7 +1457,7 @@ const PhilosophySection = ({ onOpenAbout }) => {
                   <item.icon className={item.color} size={24} />
                 </motion.div>
                 <span className={`text-[8px] md:text-[10px] font-mono uppercase ${
-                  idx === 3 ? (isDark ? 'text-slate-400' : 'text-slate-400') : 'text-slate-500'
+                  idx === 3 ? 'text-slate-400' : 'text-slate-500'
                 }`}>{item.label}</span>
               </motion.div>
             ))}
