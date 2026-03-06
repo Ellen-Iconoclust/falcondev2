@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef, createContext, useContext, useCallback } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import { 
   ArrowUpRight,
@@ -7,13 +7,10 @@ import {
   Terminal,
   Zap,
   Code,
-  Home,
   Layers,
   Sparkles,
   Cpu,
   ArrowRight,
-  User,
-  Quote,
   Lightbulb,
   Sun,
   Moon,
@@ -21,16 +18,7 @@ import {
   Linkedin,
   Mail,
   Coffee,
-  Heart,
-  Zap as ZapIcon,
-  Sparkle,
-  Brackets,
-  Database,
-  Users,
-  Code2,
-  Cpu as CpuIcon,
-  Rocket,
-  Stars
+  Rocket
 } from 'lucide-react';
 
 // --- Theme Context ---
@@ -55,7 +43,7 @@ const ThemeProvider = ({ children }) => {
     }
   }, [isDark]);
 
-  const toggleTheme = () => setIsDark(!isDark);
+  const toggleTheme = useCallback(() => setIsDark(prev => !prev), []);
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
@@ -97,7 +85,7 @@ const useTextSequence = (texts, delay = 2000) => {
     }, delay);
 
     return () => clearInterval(interval);
-  }, [texts.length, delay]);
+  }, [texts, delay]);
 
   return { text: texts[currentIndex], isVisible };
 };
@@ -108,10 +96,10 @@ const AnimatedLetters = ({ text, className = "", delay = 0.03 }) => {
 
   const container = {
     hidden: { opacity: 0 },
-    visible: (i = 1) => ({
+    visible: {
       opacity: 1,
-      transition: { staggerChildren: delay, delayChildren: delay * i }
-    })
+      transition: { staggerChildren: delay }
+    }
   };
 
   const child = {
@@ -126,12 +114,7 @@ const AnimatedLetters = ({ text, className = "", delay = 0.03 }) => {
     },
     hidden: {
       opacity: 0,
-      y: 20,
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 200
-      }
+      y: 20
     }
   };
 
@@ -207,11 +190,15 @@ const LoadingScreen = ({ onLoadingComplete }) => {
       }`}
     >
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
-        style={{ backgroundImage: `radial-gradient(${isDark ? '#60a5fa' : '#2563eb'} 0.5px, transparent 0.5px)`, backgroundSize: '32px 32px' }} />
+      <div 
+        className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+        style={{ 
+          backgroundImage: `radial-gradient(${isDark ? '#60a5fa' : '#2563eb'} 0.5px, transparent 0.5px)`, 
+          backgroundSize: '32px 32px' 
+        }} 
+      />
       
       <div className="relative z-10 w-full max-w-2xl px-8">
-        {/* Logo/Name */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -232,7 +219,6 @@ const LoadingScreen = ({ onLoadingComplete }) => {
           </h1>
         </motion.div>
         
-        {/* Progress Bar */}
         <motion.div
           initial={{ scaleX: 0.9, opacity: 0 }}
           animate={{ scaleX: 1, opacity: 1 }}
@@ -261,7 +247,6 @@ const LoadingScreen = ({ onLoadingComplete }) => {
           </div>
         </motion.div>
         
-        {/* Welcome Message */}
         <AnimatePresence>
           {showWelcome && (
             <motion.div
@@ -281,7 +266,6 @@ const LoadingScreen = ({ onLoadingComplete }) => {
           )}
         </AnimatePresence>
         
-        {/* Loading Dots */}
         <div className="flex justify-center gap-2 mt-12">
           {[0, 1, 2].map((i) => (
             <motion.div
@@ -317,7 +301,10 @@ const ParticleBackground = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
+    
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -329,17 +316,17 @@ const ParticleBackground = () => {
     
     // Create particles
     const createParticles = () => {
-      const particleCount = Math.min(60, Math.floor(window.innerWidth / 30));
+      const particleCount = Math.min(40, Math.floor(window.innerWidth / 40));
       particles.current = [];
       
       for (let i = 0; i < particleCount; i++) {
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 1,
-          speedX: (Math.random() - 0.5) * 0.3,
-          speedY: (Math.random() - 0.5) * 0.3,
-          opacity: Math.random() * 0.3 + 0.1,
+          size: Math.random() * 2 + 0.5,
+          speedX: (Math.random() - 0.5) * 0.2,
+          speedY: (Math.random() - 0.5) * 0.2,
+          opacity: Math.random() * 0.2 + 0.05,
         });
       }
     };
@@ -356,6 +343,8 @@ const ParticleBackground = () => {
     
     // Animation loop
     const animate = () => {
+      if (!ctx || !canvas) return;
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const particleColor = isDark ? '#60a5fa' : '#2563eb';
@@ -363,15 +352,17 @@ const ParticleBackground = () => {
       // Update particle positions
       particles.current.forEach(p => {
         // Mouse interaction - particles avoid mouse
-        const dx = mousePos.current.x - p.x;
-        const dy = mousePos.current.y - p.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < 150) {
-          const angle = Math.atan2(dy, dx);
-          const force = (150 - distance) / 150 * 0.5;
-          p.x -= Math.cos(angle) * force;
-          p.y -= Math.sin(angle) * force;
+        if (mousePos.current.x && mousePos.current.y) {
+          const dx = mousePos.current.x - p.x;
+          const dy = mousePos.current.y - p.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 150) {
+            const angle = Math.atan2(dy, dx);
+            const force = (150 - distance) / 150 * 0.3;
+            p.x -= Math.cos(angle) * force;
+            p.y -= Math.sin(angle) * force;
+          }
         }
         
         // Normal movement
@@ -387,7 +378,7 @@ const ParticleBackground = () => {
       
       // Draw connections
       ctx.strokeStyle = particleColor;
-      ctx.lineWidth = 0.5;
+      ctx.lineWidth = 0.3;
       
       for (let i = 0; i < particles.current.length; i++) {
         for (let j = i + 1; j < particles.current.length; j++) {
@@ -397,12 +388,13 @@ const ParticleBackground = () => {
           const dy = p1.y - p2.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          if (distance < 120) {
-            const opacity = (1 - distance / 120) * 0.15;
+          if (distance < 100) {
+            const opacity = (1 - distance / 100) * 0.1;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `${particleColor}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`;
+            ctx.strokeStyle = particleColor;
+            ctx.globalAlpha = opacity;
             ctx.stroke();
           }
         }
@@ -412,9 +404,12 @@ const ParticleBackground = () => {
       particles.current.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `${particleColor}${Math.floor(p.opacity * 255).toString(16).padStart(2, '0')}`;
+        ctx.fillStyle = particleColor;
+        ctx.globalAlpha = p.opacity;
         ctx.fill();
       });
+      
+      ctx.globalAlpha = 1;
       
       animationFrame.current = requestAnimationFrame(animate);
     };
@@ -425,7 +420,9 @@ const ParticleBackground = () => {
       window.removeEventListener('resize', resizeCanvas);
       unsubscribeMouseX();
       unsubscribeMouseY();
-      cancelAnimationFrame(animationFrame.current);
+      if (animationFrame.current) {
+        cancelAnimationFrame(animationFrame.current);
+      }
     };
   }, [mouseX, mouseY, isDark]);
 
@@ -433,50 +430,34 @@ const ParticleBackground = () => {
     <canvas 
       ref={canvasRef} 
       className="absolute inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.8 }}
     />
   );
 };
 
 // --- Animated Icon Component ---
-const AnimatedIcon = ({ icon: Icon, size = 24, className = "", onClick, href }) => {
+const AnimatedIcon = ({ icon: Icon, size = 24, className = "", href }) => {
   const [isHovered, setIsHovered] = useState(false);
   
-  const iconVariants = {
-    hover: {
-      scale: 1.2,
-      rotate: [0, -10, 10, -10, 0],
-      transition: { duration: 0.5 }
-    },
-    tap: {
-      scale: 0.9,
-      transition: { duration: 0.1 }
-    }
-  };
-
-  const Component = href ? 'a' : 'button';
+  const Component = href ? 'a' : 'div';
   
   return (
     <motion.div
-      variants={iconVariants}
-      whileHover="hover"
-      whileTap="tap"
+      whileHover={{ scale: 1.2 }}
+      whileTap={{ scale: 0.9 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      className="inline-block"
+      className="inline-block cursor-pointer"
     >
       <Component
         href={href}
         target={href ? "_blank" : undefined}
         rel={href ? "noopener noreferrer" : undefined}
-        onClick={onClick}
-        className="focus:outline-none"
       >
         <Icon 
           size={size} 
           className={`transition-all duration-300 ${
-            isHovered ? 'text-blue-600 dark:text-blue-400' : ''
-          } ${className}`}
+            isHovered ? 'text-blue-600 dark:text-blue-400' : className
+          }`}
         />
       </Component>
     </motion.div>
@@ -488,14 +469,14 @@ const MagneticButton = ({ children, onClick, className = "", icon: Icon }) => {
   const ref = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
-  const { isDark } = useTheme();
 
   const handleMouse = (e) => {
+    if (!ref.current) return;
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current.getBoundingClientRect();
     const middleX = clientX - (left + width / 2);
     const middleY = clientY - (top + height / 2);
-    setPosition({ x: middleX * 0.3, y: middleY * 0.3 });
+    setPosition({ x: middleX * 0.2, y: middleY * 0.2 });
   };
 
   const reset = () => setPosition({ x: 0, y: 0 });
@@ -514,14 +495,6 @@ const MagneticButton = ({ children, onClick, className = "", icon: Icon }) => {
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
       className={`relative inline-flex items-center justify-center overflow-hidden group ${className}`}
     >
-      {/* Ripple Effect */}
-      <motion.div
-        className="absolute inset-0 bg-white/20 dark:bg-white/10"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={isHovered ? { scale: 2, opacity: [0, 0.2, 0] } : { scale: 0, opacity: 0 }}
-        transition={{ duration: 0.6 }}
-      />
-      
       {Icon && (
         <motion.div
           animate={isHovered ? { rotate: 360 } : { rotate: 0 }}
@@ -533,11 +506,6 @@ const MagneticButton = ({ children, onClick, className = "", icon: Icon }) => {
       )}
       
       {children}
-      
-      {/* Shine Effect */}
-      <motion.div
-        className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-      />
     </motion.button>
   );
 };
@@ -547,19 +515,20 @@ const ThemeToggle = () => {
   const { isDark, toggleTheme } = useTheme();
   
   return (
-    <MagneticButton
+    <motion.button
       onClick={toggleTheme}
+      whileTap={{ scale: 0.95 }}
       className={`p-2 rounded-sm transition-colors ${
         isDark ? 'bg-slate-800 text-yellow-400' : 'bg-slate-100 text-slate-900'
       }`}
     >
       <motion.div
-        animate={{ rotate: isDark ? 360 : 0 }}
-        transition={{ duration: 0.5 }}
+        animate={{ rotate: isDark ? 180 : 0 }}
+        transition={{ duration: 0.3 }}
       >
         {isDark ? <Sun size={16} /> : <Moon size={16} />}
       </motion.div>
-    </MagneticButton>
+    </motion.button>
   );
 };
 
@@ -567,178 +536,161 @@ const ThemeToggle = () => {
 const AboutModal = ({ isOpen, onClose }) => {
   const { isDark } = useTheme();
   
+  if (!isOpen) return null;
+  
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={`fixed inset-0 z-[200] overflow-y-auto transition-colors duration-300 ${
-            isDark ? 'bg-slate-900' : 'bg-white'
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={`fixed inset-0 z-[200] overflow-y-auto transition-colors duration-300 ${
+        isDark ? 'bg-slate-900' : 'bg-white'
+      }`}
+    >
+      <div className="min-h-screen w-full relative">
+        <motion.button 
+          onClick={onClose}
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
+          className={`fixed top-8 right-8 z-30 w-10 h-10 rounded-none border flex items-center justify-center transition-all shadow-sm ${
+            isDark 
+              ? 'bg-slate-800 border-slate-700 text-white hover:bg-blue-600 hover:border-blue-600' 
+              : 'bg-white border-slate-200 hover:bg-blue-600 hover:text-white hover:border-blue-600'
           }`}
         >
-          <div className="min-h-screen w-full relative">
-            <motion.button 
-              onClick={onClose}
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.9 }}
-              className={`fixed top-8 right-8 z-30 w-10 h-10 rounded-none border flex items-center justify-center transition-all shadow-sm ${
+          <X size={18} />
+        </motion.button>
+
+        <div className="w-full max-w-7xl mx-auto px-8 md:px-10 py-28 md:py-36">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="md:col-span-1 md:row-span-2 bg-slate-900 overflow-hidden group h-[350px] md:h-[500px] relative border border-slate-800"
+            >
+              <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                <span className="text-white text-2xl font-mono">Photo</span>
+              </div>
+              <motion.div 
+                initial={{ y: 100 }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-slate-900 to-transparent w-full"
+              >
+                <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">Ellen.sys</h2>
+                <p className="text-blue-400 text-[9px] uppercase tracking-widest font-mono">v6.0.0 // ENGINEERING</p>
+              </motion.div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className={`md:col-span-2 border-2 p-8 md:p-10 flex flex-col justify-center min-h-[220px] ${
                 isDark 
-                  ? 'bg-slate-800 border-slate-700 text-white hover:bg-blue-600 hover:border-blue-600' 
-                  : 'bg-white border-slate-200 hover:bg-blue-600 hover:text-white hover:border-blue-600'
+                  ? 'bg-slate-800 border-slate-700 text-white' 
+                  : 'bg-white border-slate-200 text-slate-700'
               }`}
             >
-              <X size={18} />
-            </motion.button>
+              <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-4">Manifesto</span>
+              <p className="text-base md:text-lg font-medium tracking-wide leading-relaxed">
+                Developing high-performance digital ecosystems through algorithmic precision. 
+                Specializing in crafting experiences that harmonize complex architectural logic 
+                with minimalist, high-fidelity aesthetics.
+              </p>
+            </motion.div>
 
-            <div className="w-full max-w-7xl mx-auto px-8 md:px-10 py-28 md:py-36">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 auto-rows-auto">
-                {/* Photo */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="md:col-span-1 md:row-span-2 bg-slate-900 overflow-hidden group h-[350px] md:h-[500px] relative border border-slate-800"
-                >
-                  <motion.img 
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.6 }}
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800" 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
-                    alt="Ellen"
-                  />
-                  <motion.div 
-                    initial={{ y: 100 }}
-                    animate={{ y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-slate-900 to-transparent w-full"
-                  >
-                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">Ellen.sys</h2>
-                    <p className="text-blue-400 text-[9px] uppercase tracking-widest font-mono">v6.0.0 // ENGINEERING</p>
-                  </motion.div>
-                </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className={`border-2 p-8 md:p-10 flex flex-col items-start justify-center min-h-[180px] ${
+                isDark 
+                  ? 'bg-slate-800 border-blue-800' 
+                  : 'bg-blue-50 border-blue-200'
+              }`}
+            >
+              <Globe size={24} className="text-blue-600 mb-4" />
+              <span className="text-[8px] uppercase tracking-[0.2em] text-slate-500 mb-1.5 font-bold">Node Location</span>
+              <span className={`font-mono text-lg md:text-xl ${
+                isDark ? 'text-white' : 'text-slate-900'
+              }`}>11.01°N, 76.95°E</span>
+            </motion.div>
 
-                {/* Manifesto */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className={`md:col-span-2 border-2 p-8 md:p-10 flex flex-col justify-center min-h-[220px] ${
-                    isDark 
-                      ? 'bg-slate-800 border-slate-700 text-white' 
-                      : 'bg-white border-slate-200 text-slate-700'
-                  }`}
-                >
-                  <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-blue-600 mb-4">Manifesto</span>
-                  <p className="text-base md:text-lg font-medium tracking-wide leading-relaxed">
-                    Developing high-performance digital ecosystems through algorithmic precision. 
-                    Specializing in crafting experiences that harmonize complex architectural logic 
-                    with minimalist, high-fidelity aesthetics. Optimized in Tamil Nadu for global scale.
-                  </p>
-                </motion.div>
-
-                {/* Location */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className={`border-2 p-8 md:p-10 flex flex-col items-start justify-center min-h-[180px] ${
-                    isDark 
-                      ? 'bg-slate-800 border-blue-800' 
-                      : 'bg-blue-50 border-blue-200'
-                  }`}
-                >
-                  <Globe size={24} className="text-blue-600 mb-4" />
-                  <span className="text-[8px] uppercase tracking-[0.2em] text-slate-500 mb-1.5 font-bold">Node Location</span>
-                  <span className={`font-mono text-lg md:text-xl ${
-                    isDark ? 'text-white' : 'text-slate-900'
-                  }`}>11.01°N, 76.95°E</span>
-                </motion.div>
-
-                {/* Build Version */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="bg-blue-600 border-2 border-blue-700 p-8 md:p-10 flex flex-col justify-between min-h-[180px]"
-                >
-                  <Zap className="text-white/90" size={28} />
-                  <div>
-                    <div className="text-3xl md:text-4xl font-bold text-white tracking-tighter">6.0.0</div>
-                    <div className="text-[8px] uppercase tracking-[0.2em] text-white/70 font-bold">Build Version (Years)</div>
-                  </div>
-                </motion.div>
-
-                {/* Tech Stack */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  className={`md:col-span-2 border-2 p-8 md:p-10 overflow-hidden min-h-[180px] ${
-                    isDark 
-                      ? 'bg-slate-800 border-slate-700 text-white' 
-                      : 'bg-white border-slate-200'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-6">
-                    <Terminal size={18} className="text-blue-600" />
-                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">Daily Stack</span>
-                  </div>
-                  <div className="overflow-hidden relative">
-                    <motion.div 
-                      animate={{ x: [0, -1000] }}
-                      transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                      className="flex gap-3 whitespace-nowrap"
-                    >
-                      {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
-                        <span key={s} className={`inline-block px-4 py-2 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border ${
-                          isDark ? 'bg-slate-700 border-slate-600' : 'bg-slate-900 border-slate-700'
-                        }`}>{s}</span>
-                      ))}
-                    </motion.div>
-                  </div>
-                </motion.div>
-
-                {/* Code Philosophy */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                  className={`border-2 p-8 md:p-10 flex flex-col justify-between min-h-[180px] ${
-                    isDark 
-                      ? 'bg-slate-800 border-slate-700 text-white' 
-                      : 'bg-slate-50 border-slate-200'
-                  }`}
-                >
-                  <Code size={24} className={isDark ? 'text-slate-400' : 'text-slate-500'} />
-                  <p className="text-[10px] md:text-xs font-mono leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
-                </motion.div>
-
-                {/* System Status */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 border-2 border-slate-700 p-5 md:p-6 flex items-center justify-between"
-                >
-                  <span className="text-blue-400 font-mono text-sm md:text-base flex items-center gap-3">
-                    <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
-                    System active. Seeking collaborative protocols.
-                  </span>
-                  <MagneticButton 
-                    onClick={onClose}
-                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-none text-[9px] uppercase tracking-[0.2em] font-bold transition-all border border-white/20 hover:border-white/40"
-                  >
-                    Initiate Connection
-                  </MagneticButton>
-                </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-blue-600 border-2 border-blue-700 p-8 md:p-10 flex flex-col justify-between min-h-[180px]"
+            >
+              <Zap className="text-white/90" size={28} />
+              <div>
+                <div className="text-3xl md:text-4xl font-bold text-white tracking-tighter">6.0.0</div>
+                <div className="text-[8px] uppercase tracking-[0.2em] text-white/70 font-bold">Build Version (Years)</div>
               </div>
-            </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className={`md:col-span-2 border-2 p-8 md:p-10 overflow-hidden min-h-[180px] ${
+                isDark 
+                  ? 'bg-slate-800 border-slate-700 text-white' 
+                  : 'bg-white border-slate-200'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-6">
+                <Terminal size={18} className="text-blue-600" />
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-500">Daily Stack</span>
+              </div>
+              <div className="overflow-hidden relative">
+                <div className="flex gap-3 animate-scroll whitespace-nowrap">
+                  {['React', 'TypeScript', 'Web3', 'Rust', 'Docker', 'AWS', 'TensorFlow', 'Python', 'Go', 'Swift'].map(s => (
+                    <span key={s} className={`inline-block px-4 py-2 text-white text-[9px] font-mono tracking-tighter whitespace-nowrap border ${
+                      isDark ? 'bg-slate-700 border-slate-600' : 'bg-slate-900 border-slate-700'
+                    }`}>{s}</span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className={`border-2 p-8 md:p-10 flex flex-col justify-between min-h-[180px] ${
+                isDark 
+                  ? 'bg-slate-800 border-slate-700 text-white' 
+                  : 'bg-slate-50 border-slate-200'
+              }`}
+            >
+              <Code size={24} className={isDark ? 'text-slate-400' : 'text-slate-500'} />
+              <p className="text-[10px] md:text-xs font-mono leading-relaxed uppercase tracking-wider">// code is poetry<br/>optimized for performance</p>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="md:col-span-3 bg-gradient-to-r from-slate-900 to-blue-900 border-2 border-slate-700 p-5 md:p-6 flex items-center justify-between"
+            >
+              <span className="text-blue-400 font-mono text-sm md:text-base flex items-center gap-3">
+                <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
+                System active. Seeking collaborative protocols.
+              </span>
+              <MagneticButton 
+                onClick={onClose}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-none text-[9px] uppercase tracking-[0.2em] font-bold transition-all border border-white/20 hover:border-white/40"
+              >
+                Initiate Connection
+              </MagneticButton>
+            </motion.div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -779,63 +731,61 @@ const InspirationsModal = ({ isOpen, onClose }) => {
     }
   ];
 
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={`fixed inset-0 z-[200] flex items-start justify-center overflow-hidden transition-colors duration-300 ${
-            isDark ? 'bg-slate-900' : 'bg-white'
-          }`}
-        >
-          <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-16 scrollbar-hide">
-            <div className="max-w-4xl mx-auto">
-              <motion.div 
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="mb-20 md:mb-32"
-              >
-                <h2 className={`text-6xl md:text-8xl font-bold tracking-tighter mb-6 ${
-                  isDark ? 'text-white' : 'text-slate-900'
-                }`}>ARCHETYPES</h2>
-                <p className={`font-mono text-xs uppercase tracking-widest ${
-                  isDark ? 'text-slate-500' : 'text-slate-400'
-                }`}>Architects of the modern intellectual landscape.</p>
-              </motion.div>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={`fixed inset-0 z-[200] flex items-start justify-center overflow-hidden transition-colors duration-300 ${
+        isDark ? 'bg-slate-900' : 'bg-white'
+      }`}
+    >
+      <div className="w-full h-full relative overflow-y-auto px-6 py-24 md:py-16 scrollbar-hide">
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-20 md:mb-32"
+          >
+            <h2 className={`text-6xl md:text-8xl font-bold tracking-tighter mb-6 ${
+              isDark ? 'text-white' : 'text-slate-900'
+            }`}>ARCHETYPES</h2>
+            <p className={`font-mono text-xs uppercase tracking-widest ${
+              isDark ? 'text-slate-500' : 'text-slate-400'
+            }`}>Architects of the modern intellectual landscape.</p>
+          </motion.div>
 
-              <div className="space-y-[15vh] md:space-y-[20vh] pb-[30vh]">
-                {figures.map((figure, idx) => (
-                  <InspirationCard key={figure.name} figure={figure} index={idx} total={figures.length} />
-                ))}
-              </div>
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              className="fixed top-8 right-8 z-[210]"
-            >
-              <motion.button 
-                onClick={onClose}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
-              >
-                <X size={24} />
-              </motion.button>
-            </motion.div>
+          <div className="space-y-[15vh] md:space-y-[20vh] pb-[30vh]">
+            {figures.map((figure, idx) => (
+              <InspirationCard key={figure.name} figure={figure} index={idx} />
+            ))}
           </div>
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+          className="fixed top-8 right-8 z-[210]"
+        >
+          <motion.button 
+            onClick={onClose}
+            whileHover={{ scale: 1.1, rotate: 90 }}
+            whileTap={{ scale: 0.9 }}
+            className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xl"
+          >
+            <X size={24} />
+          </motion.button>
         </motion.div>
-      )}
-    </AnimatePresence>
+      </div>
+    </motion.div>
   );
 };
 
-const InspirationCard = ({ figure, index, total }) => {
+const InspirationCard = ({ figure, index }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
@@ -933,7 +883,10 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   const { isDark } = useTheme();
 
   useEffect(() => {
-    return scrollY.onChange((latest) => setIsScrolled(latest > 50));
+    const unsubscribe = scrollY.onChange((latest) => {
+      setIsScrolled(latest > 50);
+    });
+    return () => unsubscribe();
   }, [scrollY]);
 
   const isExpanded = !isScrolled || isHovered;
@@ -944,12 +897,10 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 
   return (
     <>
-      {/* Desktop Navbar */}
       <div className="fixed top-6 md:top-8 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4 md:px-6">
         <motion.nav 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          initial={false}
           animate={{
             width: isExpanded ? "min(750px, 90vw)" : "200px",
             paddingLeft: isExpanded ? "24px" : "16px",
@@ -957,15 +908,11 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
             backgroundColor: isScrolled 
               ? (isDark ? 'rgba(15, 23, 42, 0.98)' : 'rgba(255, 255, 255, 0.98)')
               : (isDark ? 'rgba(30, 41, 59, 0.85)' : 'rgba(248, 250, 252, 0.85)'),
-            boxShadow: isScrolled 
-              ? (isDark ? '0 20px 40px rgba(0,0,0,0.3)' : '0 20px 40px rgba(0,0,0,0.08)')
-              : '0 4px 20px rgba(0,0,0,0.01)',
-            borderColor: isScrolled 
-              ? (isDark ? 'rgba(96, 165, 250, 0.3)' : 'rgba(37, 99, 235, 0.4)')
-              : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(15, 23, 42, 0.2)')
           }}
           transition={{ type: "spring", stiffness: 350, damping: 35 }}
-          className={`pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl items-center justify-center overflow-hidden hidden md:flex`}
+          className={`pointer-events-auto h-11 md:h-12 rounded-sm border backdrop-blur-xl items-center justify-center overflow-hidden hidden md:flex ${
+            isDark ? 'border-slate-700' : 'border-slate-200'
+          }`}
         >
           <AnimatePresence mode="wait">
             {isExpanded ? (
@@ -982,7 +929,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                       key={item}
                       href={`#${item.toLowerCase() === 'work' ? 'repositories' : item.toLowerCase()}`}
                       whileHover={{ y: -2 }}
-                      whileTap={{ y: 0 }}
                       className={`text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold transition-colors ${
                         isDark 
                           ? 'text-slate-400 hover:text-blue-400' 
@@ -995,7 +941,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                   <motion.button
                     onClick={onOpenInspirations}
                     whileHover={{ y: -2 }}
-                    whileTap={{ y: 0 }}
                     className={`text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold transition-colors ${
                       isDark 
                         ? 'text-slate-400 hover:text-blue-400' 
@@ -1011,7 +956,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                   <motion.button
                     onClick={onOpenAbout}
                     whileHover={{ y: -2 }}
-                    whileTap={{ y: 0 }}
                     className={`text-[9px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.4em] font-bold border-l pl-4 md:pl-6 transition-colors ${
                       isDark 
                         ? 'text-slate-200 border-slate-700 hover:text-blue-400' 
@@ -1035,7 +979,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                   transition={{ duration: 2, repeat: Infinity }}
                   className={`w-1.5 h-1.5 ${
                     isDark ? 'bg-blue-400' : 'bg-blue-600'
-                  } shadow-[0_0_15px_#2563eb]`}
+                  } shadow-lg`}
                 />
                 <span className={`text-[9px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono ${
                   isDark ? 'text-slate-200' : 'text-slate-900'
@@ -1047,7 +991,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </motion.nav>
       </div>
 
-      {/* Mobile Navbar */}
       <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 md:hidden">
         <motion.div 
           initial={{ y: -100 }}
@@ -1093,7 +1036,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
           </div>
         </motion.div>
 
-        {/* Mobile Menu Dropdown */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -1112,7 +1054,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
                   <motion.div
                     key={item}
                     whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.95 }}
                   >
                     {item === 'Inspirations' ? (
                       <button 
@@ -1163,7 +1104,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
         </AnimatePresence>
       </div>
 
-      {/* Overlay for mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
@@ -1180,7 +1120,7 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
 };
 
 // --- Hero Section ---
-const Hero = ({ onOpenAbout }) => {
+const Hero = () => {
   const { isDark } = useTheme();
   const [showGreeting, setShowGreeting] = useState(true);
   
@@ -1204,23 +1144,19 @@ const Hero = ({ onOpenAbout }) => {
   }, []);
 
   return (
-    <section className={`relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden transition-colors duration-300 text-center px-6 pt-0 md:pt-20 ${
+    <section className={`relative min-h-screen flex flex-col items-center justify-center overflow-hidden transition-colors duration-300 text-center px-6 ${
       isDark ? 'bg-slate-900' : 'bg-white'
     }`}>
-      {/* Particle Background */}
       <ParticleBackground />
       
-      {/* Subtle blur blob */}
       <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[900px] h-[300px] md:h-[900px] rounded-full blur-[80px] md:blur-[160px] z-0 ${
         isDark ? 'bg-blue-600/10' : 'bg-blue-600/5'
       }`} />
       
-      {/* Grid pattern overlay */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
         style={{ backgroundImage: `radial-gradient(${isDark ? '#60a5fa' : '#2563eb'} 0.5px, transparent 0.5px)`, backgroundSize: '32px 32px' }} />
 
-      <div className="relative z-10 max-w-7xl mt-[-5vh] md:mt-0">
-        {/* Greeting Animation */}
+      <div className="relative z-10 max-w-7xl">
         <AnimatePresence mode="wait">
           {showGreeting ? (
             <motion.div
@@ -1266,7 +1202,6 @@ const Hero = ({ onOpenAbout }) => {
           )}
         </AnimatePresence>
 
-        {/* Role Animation */}
         <AnimatePresence mode="wait">
           {!showGreeting && (
             <motion.div
@@ -1299,7 +1234,6 @@ const Hero = ({ onOpenAbout }) => {
           )}
         </AnimatePresence>
 
-        {/* Social Icons */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -1345,25 +1279,23 @@ const ProjectItem = ({ project, index }) => {
       ref={container}
       initial={{ opacity: 0, y: 100, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: false, margin: "-100px" }}
+      viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className={`relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 shadow-2xl transition-all duration-500 ${
         isDark 
-          ? 'border-slate-800 bg-slate-900 shadow-blue-900/20 hover:border-blue-500' 
-          : 'border-slate-200 bg-white shadow-blue-900/10 hover:border-blue-500'
+          ? 'border-slate-800 bg-slate-900 hover:border-blue-500' 
+          : 'border-slate-200 bg-white hover:border-blue-500'
       }`}
     >
-      {/* Visual Outline Overlay */}
       <motion.div 
         animate={{ opacity: isHovered ? 1 : 0 }}
         className={`absolute inset-2 border pointer-events-none transition-colors duration-500 ${
-          isDark ? 'border-slate-800 group-hover:border-blue-900' : 'border-slate-100 group-hover:border-blue-100'
+          isDark ? 'border-slate-800' : 'border-slate-100'
         }`}
       />
       
-      {/* Scan Line */}
       <motion.div 
         style={{ top: scanLineY }}
         className={`absolute left-0 right-0 h-[1px] z-40 pointer-events-none ${
@@ -1429,7 +1361,7 @@ const ProjectItem = ({ project, index }) => {
           >
             Execute_Launch
           </motion.span>
-          <MagneticButton className={`w-16 h-16 md:w-24 md:h-24 text-white transition-all shadow-xl group/btn ${
+          <MagneticButton className={`w-16 h-16 md:w-24 md:h-24 text-white transition-all shadow-xl ${
             isDark ? 'bg-blue-600 hover:bg-slate-800' : 'bg-blue-600 hover:bg-slate-900'
           }`}>
             <motion.div
@@ -1509,16 +1441,16 @@ const PhilosophySection = ({ onOpenAbout }) => {
           
           <div className="grid grid-cols-2 gap-3 md:gap-4">
             {[
-              { icon: Layers, label: "Architecture", color: "text-blue-500", bg: isDark ? "bg-slate-800" : "bg-slate-800" },
+              { icon: Layers, label: "Architecture", color: "text-blue-500", bg: "bg-slate-800" },
               { icon: Sparkles, label: "Heuristics", color: "text-white", bg: "bg-blue-600" },
-              { icon: Cpu, label: "Compute", color: "text-blue-500", bg: isDark ? "bg-slate-900" : "bg-slate-900" },
+              { icon: Cpu, label: "Compute", color: "text-blue-500", bg: "bg-slate-900" },
               { icon: Code, label: "Syntax", color: isDark ? "text-white" : "text-slate-900", bg: "bg-white" }
             ].map((item, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.05, rotate: idx % 2 === 0 ? -2 : 2 }}
+                whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.4, delay: idx * 0.1 }}
                 className={`p-6 md:p-10 ${item.bg} border ${isDark ? 'border-white/5' : 'border-white/10'} flex flex-col gap-6 md:gap-10 aspect-square justify-between group`}
               >
@@ -1683,7 +1615,9 @@ const CursorFollower = () => {
   return (
     <motion.div 
       style={{ left: springX, top: springY }}
-      className={`cursor-follow ${isDark ? 'dark' : ''}`}
+      className={`fixed w-1.5 h-1.5 pointer-events-none z-[9999] transition-colors duration-300 ${
+        isDark ? 'bg-blue-400' : 'bg-blue-600'
+      }`}
     />
   );
 };
@@ -1693,7 +1627,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isInspirationsOpen, setIsInspirationsOpen] = useState(false);
-  const { isDark } = useTheme();
   
   const projects = [
     { title: "NEURAL", tags: ["Python", "C++"], description: "Optimized inference engine for low-latency neural processing on the edge." },
@@ -1704,10 +1637,72 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <div className={`min-h-screen transition-colors duration-300 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden ${
-        isDark ? 'dark bg-slate-900 text-white' : 'bg-white text-slate-900'
-      }`}>
-        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet" />
+      <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-300">
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&family=JetBrains+Mono:wght@400;700&family=Great+Vibes&display=swap');
+          
+          * {
+            scroll-behavior: smooth;
+          }
+          
+          body {
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+          }
+          
+          .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+          }
+          
+          .signature {
+            font-family: 'Great Vibes', cursive;
+          }
+          
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          
+          @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          
+          .animate-scroll {
+            animation: scroll 25s linear infinite;
+            width: fit-content;
+          }
+          
+          .animate-scroll:hover {
+            animation-play-state: paused;
+          }
+          
+          ::-webkit-scrollbar {
+            width: 3px;
+          }
+          
+          ::-webkit-scrollbar-track {
+            background: #ffffff;
+          }
+          
+          ::-webkit-scrollbar-thumb {
+            background: #2563eb;
+          }
+          
+          .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+          }
+          
+          .dark ::-webkit-scrollbar-thumb {
+            background: #60a5fa;
+          }
+        `}</style>
         
         <AnimatePresence mode="wait">
           {isLoading && (
@@ -1715,23 +1710,34 @@ const App = () => {
           )}
         </AnimatePresence>
 
-        <Navbar onOpenAbout={() => setIsAboutOpen(true)} onOpenInspirations={() => setIsInspirationsOpen(true)} />
-        <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
-        <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
+        <Navbar 
+          onOpenAbout={() => setIsAboutOpen(true)} 
+          onOpenInspirations={() => setIsInspirationsOpen(true)} 
+        />
         
-        <Hero onOpenAbout={() => setIsAboutOpen(true)} />
+        <AnimatePresence>
+          {isAboutOpen && (
+            <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+          )}
+        </AnimatePresence>
+        
+        <AnimatePresence>
+          {isInspirationsOpen && (
+            <InspirationsModal isOpen={isInspirationsOpen} onClose={() => setIsInspirationsOpen(false)} />
+          )}
+        </AnimatePresence>
+        
+        <Hero />
 
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
           <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b pb-12 gap-8 ${
-            isDark ? 'border-slate-800' : 'border-slate-100'
+            isInspirationsOpen ? 'border-slate-800' : 'border-slate-100 dark:border-slate-800'
           }`}>
             <div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className={`text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 ${
-                  isDark ? 'text-blue-400' : 'text-blue-600'
-                }`}
+                className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600 dark:text-blue-400"
               >
                 Stack // 2026
               </motion.h2>
@@ -1739,9 +1745,7 @@ const App = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className={`text-3xl md:text-4xl font-bold tracking-tighter ${
-                  isDark ? 'text-white' : 'text-slate-900'
-                }`}
+                className="text-3xl md:text-4xl font-bold tracking-tighter"
               >
                 Verified Deployments
               </motion.p>
@@ -1750,9 +1754,7 @@ const App = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono ${
-                isDark ? 'text-slate-600' : 'text-slate-300'
-              }`}
+              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-300 dark:text-slate-600"
             >
               Status: Online
             </motion.span>
@@ -1767,9 +1769,7 @@ const App = () => {
 
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
-        <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 ${
-          isDark ? 'bg-slate-900' : 'bg-white'
-        }`}>
+        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 bg-white dark:bg-slate-900">
           <div className="text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1779,11 +1779,7 @@ const App = () => {
             >
               <motion.span 
                 whileHover={{ scale: 1.05 }}
-                className={`px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block ${
-                  isDark 
-                    ? 'bg-slate-800 text-blue-400' 
-                    : 'bg-slate-900 text-blue-400'
-                }`}
+                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 dark:bg-slate-800 text-blue-400"
               >
                 Connection: Listening
               </motion.span>
@@ -1793,23 +1789,15 @@ const App = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase ${
-                isDark ? 'text-white' : 'text-slate-900'
-              }`}
+              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase"
             >
-              Execute <br className="hidden md:block" /> <span className={`italic font-mono ${
-                isDark ? 'text-blue-400' : 'text-blue-600'
-              }`}>Command.</span>
+              Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
             </motion.h2>
             
             <div className="pb-20 md:pb-0">
               <MagneticButton 
                 icon={Rocket}
-                className={`px-12 md:px-20 py-6 md:py-10 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all shadow-2xl ${
-                  isDark 
-                    ? 'bg-blue-600 hover:bg-slate-800 text-white' 
-                    : 'bg-blue-600 hover:bg-slate-900 text-white'
-                }`}
+                className="px-12 md:px-20 py-6 md:py-10 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all shadow-2xl bg-blue-600 hover:bg-slate-900 dark:hover:bg-slate-800 text-white"
               >
                 Initiate Thread
               </MagneticButton>
@@ -1821,43 +1809,6 @@ const App = () => {
           onOpenInspirations={() => setIsInspirationsOpen(true)} 
           onOpenAbout={() => setIsAboutOpen(true)} 
         />
-
-        <style>{`
-          * { cursor: none; scroll-behavior: smooth; }
-          @media (max-width: 1024px) {
-            * { cursor: auto !important; }
-            .cursor-follow { display: none !important; }
-          }
-          body { font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
-          .font-mono { font-family: 'JetBrains Mono', monospace; }
-          .signature { font-family: 'Great Vibes', cursive; }
-          .scrollbar-hide::-webkit-scrollbar { display: none; }
-          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-          
-          .cursor-follow {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: #2563eb;
-            pointer-events: none;
-            z-index: 9999;
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
-            transition: background-color 0.3s;
-          }
-          
-          .cursor-follow.dark {
-            background: #60a5fa;
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.6);
-          }
-          
-          ::-webkit-scrollbar { width: 3px; }
-          ::-webkit-scrollbar-track { background: ${isDark ? '#1e293b' : '#ffffff'}; }
-          ::-webkit-scrollbar-thumb { background: ${isDark ? '#60a5fa' : '#2563eb'}; }
-          
-          .dark {
-            color-scheme: dark;
-          }
-        `}</style>
         
         <CursorFollower />
       </div>
