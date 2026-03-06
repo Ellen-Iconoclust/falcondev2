@@ -1192,7 +1192,7 @@ const Hero = () => {
               <AnimatedLetters 
                 text="Hi There !"
                 className={`text-5xl md:text-7xl font-bold block ${
-                  isDark ? 'text-white' : 'text-slate-900'
+                  isDark ? 'text-white' : 'text-black'
                 }`}
               />
               <AnimatedLetters 
@@ -1244,7 +1244,7 @@ const Hero = () => {
                     <AnimatedLetters 
                       text={currentRole}
                       className={`text-2xl md:text-4xl font-bold ${
-                        isDark ? 'text-white' : 'text-slate-900'
+                        isDark ? 'text-white' : 'text-black'
                       }`}
                       delay={0.02}
                     />
@@ -1728,9 +1728,7 @@ const App = () => {
         <Hero />
 
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40">
-          <div className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b pb-12 gap-8 ${
-            false ? 'border-slate-800' : 'border-slate-200 dark:border-slate-800'
-          }`}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 dark:border-slate-800 pb-12 gap-8">
             <div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
@@ -1752,9 +1750,7 @@ const App = () => {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono ${
-                false ? 'text-slate-600' : 'text-slate-400 dark:text-slate-600'
-              }`}
+              className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-400 dark:text-slate-600"
             >
               Status: Online
             </motion.span>
@@ -1769,9 +1765,7 @@ const App = () => {
 
         <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
-        <section id="root" className={`min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 ${
-          false ? 'bg-slate-900' : 'bg-white dark:bg-slate-900'
-        }`}>
+        <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 transition-colors duration-300 bg-white dark:bg-slate-900">
           <div className="text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1781,11 +1775,7 @@ const App = () => {
             >
               <motion.span 
                 whileHover={{ scale: 1.05 }}
-                className={`px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block ${
-                  false 
-                    ? 'bg-slate-800 text-blue-400' 
-                    : 'bg-slate-900 dark:bg-slate-800 text-blue-400'
-                }`}
+                className="px-6 md:px-10 py-3 md:py-4 text-[8px] md:text-[9px] uppercase tracking-[0.6em] font-bold font-mono shadow-sm inline-block bg-slate-900 dark:bg-slate-800 text-blue-400"
               >
                 Connection: Listening
               </motion.span>
@@ -1795,9 +1785,7 @@ const App = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
-              className={`text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase ${
-                false ? 'text-white' : 'text-slate-900 dark:text-white'
-              }`}
+              className="text-6xl md:text-[12vw] font-bold tracking-tighter mb-16 md:mb-24 leading-[0.8] uppercase text-slate-900 dark:text-white"
             >
               Execute <br className="hidden md:block" /> <span className="italic font-mono text-blue-600 dark:text-blue-400">Command.</span>
             </motion.h2>
