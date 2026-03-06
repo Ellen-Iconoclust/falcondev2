@@ -1115,103 +1115,6 @@ const Navbar = ({ onOpenAbout, onOpenInspirations }) => {
   );
 };
 
-// --- Scroll Reveal Text Component (like in the HTML example) ---
-const ScrollRevealText = () => {
-  const container = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ["start start", "end end"]
-  });
-
-  // Split text into words for reveal animation
-  const text = "I believe that software should be more than just code. It should be an experience that feels fluid, intuitive, and remarkably fast. My mission is to bridge the gap between complex logic and human-centric design.";
-  const words = text.split(" ");
-
-  return (
-    <section ref={container} className="relative h-[300vh]" id="protocol">
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <div>
-              <motion.div 
-                initial={{ width: 0 }}
-                whileInView={{ width: "4rem" }}
-                transition={{ duration: 0.8 }}
-                className="w-12 md:w-16 h-[2px] bg-blue-600 mb-8 md:mb-12"
-              />
-              <motion.h3 
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold text-blue-500 mb-6 md:mb-10"
-              >
-                Core Protocols
-              </motion.h3>
-              
-              {/* Scroll Reveal Text */}
-              <div className="text-2xl md:text-4xl font-bold text-black dark:text-white leading-tight">
-                {words.map((word, i) => {
-                  const start = i / words.length;
-                  const end = (i + 1) / words.length;
-                  
-                  return (
-                    <motion.span
-                      key={i}
-                      className="inline-block mr-2"
-                      style={{
-                        color: useTransform(
-                          scrollYProgress,
-                          [start, end],
-                          ["rgba(0,0,0,0.1)", "rgba(0,0,0,1)"]
-                        )
-                      }}
-                    >
-                      {word}
-                    </motion.span>
-                  );
-                })}
-              </div>
-
-              <motion.button
-                onClick={() => {}}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3 }}
-                className="group flex items-center gap-3 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold transition-all rounded-sm mt-8"
-              >
-                More About Me
-                <motion.div
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >
-                  <ArrowRight size={16} />
-                </motion.div>
-              </motion.button>
-            </div>
-            
-            {/* Image Column with parallax */}
-            <motion.div
-              style={{
-                y: useTransform(scrollYProgress, [0, 1], [100, -100]),
-                opacity: useTransform(scrollYProgress, [0, 0.5, 1], [0.5, 1, 0.5])
-              }}
-              className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-900"
-            >
-              <div className="absolute inset-0 bg-black/30" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Code size={80} className="text-white/20" />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
 // --- Hero Section ---
 const Hero = () => {
   const { isDark } = useTheme();
@@ -1285,7 +1188,7 @@ const Hero = () => {
           </motion.span>
         </motion.div>
 
-        {/* Permanent greeting - slightly smaller */}
+        {/* Permanent greeting - FULL CAPS and slightly smaller */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1293,8 +1196,8 @@ const Hero = () => {
           className="mb-2"
         >
           <AnimatedLetters 
-            text="Hi There !"
-            className={`text-4xl md:text-6xl font-bold block ${
+            text="HI THERE !"
+            className={`text-4xl md:text-6xl font-bold block uppercase ${
               isDark ? 'text-white' : 'text-black'
             }`}
           />
@@ -1352,7 +1255,7 @@ const Hero = () => {
   );
 };
 
-// --- Project Item ---
+// --- Project Item with fixed animation timing ---
 const ProjectItem = ({ project, index }) => {
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -1368,10 +1271,10 @@ const ProjectItem = ({ project, index }) => {
   return (
     <motion.div 
       ref={container}
-      initial={{ opacity: 0, y: 100, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
+      initial={{ opacity: 0, y: 100 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       className={`relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 shadow-2xl transition-all duration-500 ${
@@ -1465,6 +1368,98 @@ const ProjectItem = ({ project, index }) => {
         </div>
       </div>
     </motion.div>
+  );
+};
+
+// --- Philosophy Section (always dark) - RESTORED ORIGINAL ---
+const PhilosophySection = ({ onOpenAbout }) => {
+  const container = useRef(null);
+  const { scrollYProgress } = useScroll({ target: container, offset: ["start end", "end start"] });
+  const xText = useTransform(scrollYProgress, [0, 1], [50, -50]);
+
+  return (
+    <section ref={container} id="protocol" className="py-24 md:py-52 overflow-hidden relative border-y bg-slate-900 border-white/5">
+      <motion.div style={{ x: xText }} className="flex whitespace-nowrap mb-16 md:mb-24 opacity-10 pointer-events-none">
+        <h2 className="text-[20vw] md:text-[15vw] font-mono uppercase tracking-tighter leading-none text-blue-500">
+          PERFORMANT &middot; SECURE &middot; ATOMIC &middot; 
+        </h2>
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto px-6 md:px-10 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+          <div>
+            <motion.div 
+              initial={{ width: 0 }}
+              whileInView={{ width: "4rem" }}
+              transition={{ duration: 0.8 }}
+              className="w-12 md:w-16 h-[2px] bg-blue-600 mb-8 md:mb-12"
+            />
+            <motion.h3 
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold text-blue-500 mb-6 md:mb-10"
+            >
+              Core Protocols
+            </motion.h3>
+            <motion.p 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-3xl md:text-5xl font-bold text-white tracking-tighter leading-[1.1] md:leading-[1] mb-8"
+            >
+              Reliability is <br className="hidden md:block" /> the highest form <br className="hidden md:block" /> of <span className="text-blue-600 italic font-mono">interface</span>.
+            </motion.p>
+            <motion.button
+              onClick={onOpenAbout}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="group flex items-center gap-3 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold transition-all rounded-sm"
+            >
+              More About Me
+              <motion.div
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <ArrowRight size={16} />
+              </motion.div>
+            </motion.button>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            {[
+              { icon: Layers, label: "Architecture", color: "text-blue-500", bg: "bg-slate-800" },
+              { icon: Sparkles, label: "Heuristics", color: "text-white", bg: "bg-blue-600" },
+              { icon: Cpu, label: "Compute", color: "text-blue-500", bg: "bg-slate-900" },
+              { icon: Code, label: "Syntax", color: "text-slate-900", bg: "bg-white" }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                className={`p-6 md:p-10 ${item.bg} border border-white/5 flex flex-col gap-6 md:gap-10 aspect-square justify-between group`}
+              >
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <item.icon className={item.color} size={24} />
+                </motion.div>
+                <span className={`text-[8px] md:text-[10px] font-mono uppercase ${
+                  idx === 3 ? 'text-slate-400' : 'text-slate-500'
+                }`}>{item.label}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
@@ -1700,13 +1695,15 @@ const App = () => {
         
         <Hero />
 
-        {/* Verified Deployments - adapts to theme */}
+        {/* Verified Deployments - fixed animation timing */}
         <section id="repositories" className="px-6 md:px-24 max-w-[1600px] mx-auto py-20 md:py-40 bg-white dark:bg-slate-900">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 border-b border-slate-200 dark:border-slate-800 pb-12 gap-8">
             <div>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6 }}
                 className="text-[9px] md:text-[10px] uppercase tracking-[0.6em] md:tracking-[0.8em] font-bold font-mono mb-4 md:mb-6 text-blue-600 dark:text-blue-400"
               >
                 Stack // 2026
@@ -1714,7 +1711,8 @@ const App = () => {
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-3xl md:text-4xl font-bold tracking-tighter text-slate-900 dark:text-white"
               >
                 Verified Deployments
@@ -1723,7 +1721,8 @@ const App = () => {
             <motion.span 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold font-mono text-slate-500 dark:text-slate-400"
             >
               Status: Online
@@ -1737,8 +1736,8 @@ const App = () => {
           </div>
         </section>
 
-        {/* New Scroll Reveal Section replacing PhilosophySection */}
-        <ScrollRevealText />
+        {/* Philosophy Section - RESTORED ORIGINAL with dark background and four squares */}
+        <PhilosophySection onOpenAbout={() => setIsAboutOpen(true)} />
 
         {/* Root section - adapts to theme */}
         <section id="root" className="min-h-[90vh] flex flex-col items-center justify-center px-6 relative overflow-hidden pt-20 bg-white dark:bg-slate-900">
