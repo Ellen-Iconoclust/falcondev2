@@ -289,7 +289,7 @@ const LoadingScreen = ({ onLoadingComplete }) => {
   );
 };
 
-// --- Particle Effect Component ---
+// --- Particle Effect Component (Enhanced Visibility) ---
 const ParticleBackground = () => {
   const canvasRef = useRef(null);
   const { mouseX, mouseY } = useMousePosition();
@@ -314,17 +314,18 @@ const ParticleBackground = () => {
     window.addEventListener('resize', resizeCanvas);
     
     const createParticles = () => {
-      const particleCount = Math.min(40, Math.floor(window.innerWidth / 40));
+      // Increased particle count for better visibility
+      const particleCount = Math.min(60, Math.floor(window.innerWidth / 30));
       particles.current = [];
       
       for (let i = 0; i < particleCount; i++) {
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 0.5,
-          speedX: (Math.random() - 0.5) * 0.2,
-          speedY: (Math.random() - 0.5) * 0.2,
-          opacity: Math.random() * 0.2 + 0.05,
+          size: Math.random() * 2.5 + 1, // Slightly larger
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.4 + 0.2, // Range 0.2 to 0.6
         });
       }
     };
@@ -369,8 +370,9 @@ const ParticleBackground = () => {
       });
       
       ctx.strokeStyle = particleColor;
-      ctx.lineWidth = 0.3;
+      ctx.lineWidth = 0.5;
       
+      // Draw connections with increased opacity
       for (let i = 0; i < particles.current.length; i++) {
         for (let j = i + 1; j < particles.current.length; j++) {
           const p1 = particles.current[i];
@@ -380,7 +382,7 @@ const ParticleBackground = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
           
           if (distance < 100) {
-            const opacity = (1 - distance / 100) * 0.1;
+            const opacity = (1 - distance / 100) * 0.2; // Was 0.1, now 0.2
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -1267,6 +1269,7 @@ const ProjectItem = ({ project, index }) => {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
+      // In light mode, background is white; in dark mode, it's slate-900
       className={`relative w-full h-[70vh] md:h-[90vh] mb-[8vh] md:mb-[15vh] overflow-hidden group border-2 shadow-2xl transition-all duration-500 ${
         isDark 
           ? 'border-slate-800 bg-slate-900 hover:border-blue-500' 
