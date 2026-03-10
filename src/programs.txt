@@ -1,580 +1,435 @@
-4th program 
+2nd program 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sri Ramakrishna College Website</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            scroll-behavior: smooth;
+
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 4
+int top=-1,inp_array[20];
+void push();
+void pop();
+void display();
+int main(){
+    int choice;
+    while(1){
+        printf("\n---Stack Operations---\n");
+        printf("\n1.Push");
+        printf("\n2.Pop");
+        printf("\n3.Display Elements");
+        printf("\n4.End");
+        printf("\nEnter your choice:");
+        scanf("%d",&choice);
+        switch(choice){
+            case 1:
+            push();
+            break;
+            case 2:
+            pop();
+            break;
+            case 3:
+            display();
+            break;
+            case 4:
+            exit(0);
+            default:
+            printf("\nInvalid Choice");
         }
-        header {
-            background: purple;
-            color: white;
-            text-align: center;
-            padding: 18px;
+    }
+    return 0;
+}
+void push(){
+    int x;
+    if(top==SIZE-1){
+        printf("\nStack Full");
+    }else{
+        printf("\nEnter the element:");
+        scanf("%d",&x);
+        top++;
+        inp_array[top]=x;
+        printf("\nInserted Successfully");
+    }
+}
+void pop(){
+    if(top==-1){
+        printf("\nStack Empty");
+    }else{
+        printf("\nPopped Element:%d",inp_array[top]);
+        top--;
+    }
+}
+void display(){
+    if(top==-1){
+        printf("\nStack Empty");
+    }else{
+        printf("\nStack Elements:\n");
+        for(int i=top;i>=0;i--){
+            printf("%d\n",inp_array[i]);
         }
-        nav {
-            background: #e9d5ff;
-            text-align: center;
-            padding: 12px;
-        }
-        nav a {
-            margin: 0 16px;
-            text-decoration: none;
-            font-weight: bold;
-            color: purple;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        section {
-            padding: 30px;
-        }
-        h2 {
-            color: purple;
-        }
-        footer {
-            background: purple;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <h1>Sri Ramakrishna College of Arts & Science</h1>
-</header>
-
-<nav>
-    <a href="#home">Home</a>
-    <a href="#departments">Departments</a>
-    <a href="#admissions">Admissions</a>
-    <a href="#contact">Contact</a>
-</nav>
-
-<section id="home">
-    <h2>Welcome to Our College</h2>
-    <p>SRCAS provides high-quality education with modern labs, 
-       experienced faculty, and excellent campus facilities.</p>
-</section>
-
-<section id="departments">
-    <h2>Departments</h2>
-    <p>We offer a wide range of programs:</p>
-    <ul>
-        <li>Computer Science</li>
-        <li>Commerce</li>
-        <li>English Literature</li>
-        <li>Mathematics</li>
-        <li>Business Administration</li>
-    </ul>
-</section>
-
-<section id="admissions">
-    <h2>Admissions</h2>
-    <p>Admissions are open for 2025-2026.</p>
-    <p>Application forms are available online and in the admin office.</p>
-</section>
-
-<footer id="contact">
-    <h2>Contact Us</h2>
-    <p>Email: info@srcas.edu | Phone: +91 98765 43210</p>
-    <p> 2025 Sri Ramakrishna College of Arts & Science</p>
-</footer>
-
-</body>
-</html>
+    }
+}
 
 
 
 
-5th program 
+
+
+3rd program
 
 
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>SRCAS Programming Event</title>
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 5
+int items[SIZE],front=-1,rear=-1;
+void enqueue(int);
+void dequeue();
+void display();
+int main(){
+    dequeue();
+    enqueue(1);
+    enqueue(2);
+    enqueue(3);
+    enqueue(4);
+    enqueue(5);
+    enqueue(6);
+    display();
+    dequeue();
+    display();
+    return 0;
+}
+void enqueue(int value){
+    if(rear==SIZE-1){
+        printf("\nQueue is Full");
+    }else{
+        if(front==-1)
+        front=0;
+        rear++;
+        items[rear]=value;
+        printf("\nInserted:%d",value);
+    }
+}
+void dequeue(){
+    if(front==-1){
+        printf("\nQueue is Empty");
+    }else{
+        printf("\nDeleted:%d",items[front]);
+        front++;
+        if(front>rear)
+        front=rear=-1;
+    }
+}
+void display(){
+     if(rear==-1){
+        printf("\nQueue is Empty");
+     }else{
+         printf("\nQueue Elements:\n");
+         for(int i=front;i<=rear;i++){
+             printf("%d\n",items[i]);
+         }
+     }
+}
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            scroll-behavior: smooth;
-        }
-        header {
-            background: purple;
-            color: white;
-            text-align: center;
-            padding: 18px;
-        }
-        nav {
-            background: #e9d5ff;
-            text-align: center;
-            padding: 12px;
-        }
-        nav a {
-            margin: 0 16px;
-            text-decoration: none;
-            font-weight: bold;
-            color: purple;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        section {
-            padding: 30px;
-            text-align: center;
-        }
-        h2 {
-            color: purple;
-        }
-        footer {
-            background: purple;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
 
-        /* Registration Form Styling */
-        #regForm {
-            display: none;
-            background: #f3e8ff;
-            padding: 20px;
-            width: 300px;
-            margin: 20px auto;
-            border: 2px solid purple;
-            border-radius: 8px;
-        }
-        input, select {
-            width: 90%;
-            padding: 8px;
-            margin: 8px 0;
-        }
-        .btn {
-            background: purple;
-            color: white;
-            padding: 8px 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background: darkmagenta;
-        }
-    </style>
-</head>
 
-<body>
 
-<header>
-    <h1>Programming Event 2025</h1>
-    <h3>Organized by SRCAS</h3>
-</header>
+4th program
 
-<nav>
-    <a href="#about">About</a>
-    <a href="#events">Events</a>
-    <a href="#contact">Contact</a>
-</nav>
 
-<section id="about">
-    <h2>About the Event</h2>
-    <p>Join us for a thrilling Programming Event at SRCAS! 
-       Compete, learn, and create amazing solutions.</p>
 
-    <button class="btn" onclick="showForm()">Register Now</button>
+#include <stdio.h>
+#include <stdlib.h>
+struct node{
+    int value;
+    struct node *next;
+};
+void printLinkedlist(struct node *p){
+    while(p!=NULL){
+        printf("%d\t",p->value);
+        p=p->next;
+    }
+}
+int main(){
+    struct node *head;
+    struct node *one=NULL;
+    struct node *two=NULL;
+    struct node *three=NULL;
+    one=(struct node*)malloc(sizeof(struct node));
+    two=(struct node*)malloc(sizeof(struct node));
+    three=(struct node*)malloc(sizeof(struct node));
+    if(one==NULL||two==NULL||three==NULL){
+        printf("Memory Allocation Failed");
+        return 1;
+    }
+    one->value=1;
+    two->value=2;
+    three->value=3;
+    one->next=two;
+    two->next=three;
+    three->next=NULL;
+    head=one;
+    printLinkedlist(head);
+    return 0;
+}
 
-    <!-- Registration Form -->
-    <form id="regForm">
-        <h3>Registration Form</h3>
-        <input type="text" placeholder="Name" required>
-        <input type="text" placeholder="Reg. No" required>
-        <input type="text" placeholder="Department" required>
 
-        <select required>
-            <option value="">Select Shift</option>
-            <option>Shift 1</option>
-            <option>Shift 2</option>
-        </select>
 
-        <select required>
-            <option value="">Event Applying For</option>
-            <option>Coding Challenge</option>
-            <option>Debugging</option>
-            <option>Mini Game Development</option>
-        </select>
+5th Program
 
-        <br>
-        <button class="btn" type="button" onclick="submitForm()">Submit</button>
-    </form>
-</section>
 
-<section id="events">
-    <h2>Event Categories</h2>
-    <ul>
-        <li>Coding Challenge</li>
-        <li>Debugging</li>
-        <li>Mini Game Development</li>
-    </ul>
-</section>
+#include <stdio.h>
+#include <stdlib.h>
+typedef struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+} Node;
+Node *createNode(int data) {
+    Node *newNode = (Node *) malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+void insertAtHead(Node **head, int data) {
+    Node *newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        newNode->next = *head;
+        (*head)->prev = newNode;
+        *head = newNode;
+    }
+}
+void insertAtTail(Node **head, int data) {
+    Node *newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node *temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+void printList(Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
 
-<footer id="contact">
-    <h2>Contact Us</h2>
-    <p>Email: csdept@srcas.ac.in | Phone: +91 98765 43210</p>
-    <p>© 2025 SRCAS Programming Club</p>
-</footer>
-
-<script>
-    function showForm() {
-        document.getElementById("regForm").style.display = "block";
+int main(void) {
+    Node *head = NULL;
+    insertAtHead(&head, 1);
+    insertAtHead(&head, 2);
+    insertAtHead(&head, 3);
+    printf("List: ");
+    printList(head);
+    insertAtTail(&head, 4);
+    insertAtTail(&head, 5);
+    printf("List after inserting at tail: ");
+    printList(head);
+    Node *cur = head;
+    while (cur != NULL) {
+        Node *next = cur->next;
+        free(cur);
+        cur = next;
     }
 
-    function submitForm() {
-        alert("Registration Submitted Successfully!");
-        document.getElementById("regForm").style.display = "none";
+    return 0;
+}
+
+
+
+6th program 
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#define N 6
+struct Node {
+int dest;
+struct Node* next;
+};
+struct Graph {
+struct Node* head[N];
+};
+struct Edge {
+int src, dest;
+};
+struct Graph* createGraph(struct Edge edges[], int n) {
+unsigned i;
+struct Graph graph = (struct Graph)malloc(sizeof(struct Graph));
+for (i = 0; i < N; i++)
+graph->head[i] = NULL;
+for (i = 0; i < n; i++) {
+int src = edges[i].src;
+int dest = edges[i].dest;
+struct Node newNode = (struct Node)malloc(sizeof(struct Node));
+newNode->dest = dest;
+newNode->next = graph->head[src];
+graph->head[src] = newNode;
+}
+return graph;
+}
+void printGraph(struct Graph* graph) {
+int i;
+for (i = 0; i < N; i++) {
+struct Node* ptr = graph->head[i];
+while (ptr != NULL) {
+printf("(%d --> %d) ", i, ptr->dest);
+ptr = ptr->next;
+}
+printf("\n");
+}
+}
+void main() {
+struct Edge edges[] = {
+{0,1},{1,2},{2,0},{2,1},{3,2},{4,5},{5,4}
+};
+int n = sizeof(edges) / sizeof(edges[0]);
+struct Graph* graph = createGraph(edges, n);
+clrscr();
+printGraph(graph);
+getch();
+}
+
+
+
+
+7th program
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+    int array[20], search, i, n;
+
+    printf("\nEnter the number of elements:");
+    scanf("%d",&n);
+
+    printf("\nEnter %d elements:\n",n);
+
+    for(i=0;i<n;i++){
+        scanf("%d",&array[i]);
     }
-</script>
 
-</body>
-</html>
+    printf("\nEnter the element to search:");
+    scanf("%d",&search);
 
-
-
-6th Program
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRCAS Text Styles Paragraph</title>
-
-    <style>
-        .bold { font-weight: bold; }
-        .italic { font-style: italic; }
-        .underline { text-decoration: underline; }
-        .color { color: blue; }
-        .uppercase { text-transform: uppercase; }
-        .shadow { text-shadow: 2px 2px 3px gray; }
-        .spacing { letter-spacing: 3px; }
-        p { margin-bottom: 12px; }
-    </style>
-</head>
-<body>
-
-<h2>About SRCAS with Text Styles</h2>
-<p class="bold">Sri Ramakrishna College of Arts and Science (SRCAS) is one of the leading institutions in Coimbatore offering quality education.</p>
-<p class="italic">It provides a wide range of undergraduate and postgraduate programs to help students achieve their career goals.</p>
-<p class="underline">The college campus is well equipped with modern facilities and a peaceful environment for learning.</p>
-<p class="color">SRCAS encourages students to participate in various events and activities to enhance their skills.</p>
-<p class="uppercase">The college aims to develop students with strong academic knowledge and leadership qualities.</p>
-<p class="shadow">It also supports innovative thinking and research to shape the future of the youth.</p>
-<p class="spacing">Overall, SRCAS is a great place for students to grow and build a successful future.</p>
-</body>
-</html>
-
-
-7th Program 
-
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Canvas</title>
-    <style>
-        canvas{
-            border: 2px solid black;
-            display: block;
-            margin: 20px auto;
+    for(i=0;i<n;i++){
+        if(search==array[i]){
+            printf("The element %d is located at %d.",search,i+1);
+            break;
         }
-    </style>
-</head>
+    }
 
-<body>
+    if(i==n){
+        printf("\nElement %d is not located.",search);
+    }
 
-<h2 style="text-align: center;">Canvas</h2>
-
-<canvas id="myCanvas" width="300" height="200"></canvas>
-
-<script>
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-
-ctx.fillStyle = "blue";
-ctx.fillRect(20,20,120,70);
-
-ctx.beginPath();
-ctx.arc(200,100,40,0,2*Math.PI);
-ctx.stroke();
-</script>
-
-</body>
-</html>
+    return 0;
+}
 
 
-8th program 
+
+8th Program
 
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Canvas</title>
-    <style>
-        canvas{
-            border: 2px solid black;
-            display: block;
-            margin: 20px auto;
+
+#include <stdio.h>
+#include <stdlib.h>
+int main(){
+    int array[100],search,i,n,first,last,middle;
+    printf("\nEnter the number of elements:");
+    scanf("%d",&n);
+
+    printf("\nEnter %d elements:\n",n);
+
+    for(i=0;i<n;i++){
+        scanf("%d",&array[i]);
+    }
+
+    printf("\nEnter the element to search:");
+    scanf("%d",&search);
+    first=0;
+    last=n-1;
+    middle=(first+last)/2;
+    while(first<=last){
+        if(array[middle]<search){
+            first=middle+1;
+        }else if(array[middle]==search){
+            printf("\nElement %d is located at %d",search,middle+1);
+            return 0;
+        }else{
+            last=middle-1;
         }
-    </style>
-</head>
-
-<body>
-
-<h2 style="text-align: center;">Canvas Smiley</h2>
-
-<canvas id="myCanvas" width="300" height="300"></canvas>
-
-<script>
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-
-// Face
-ctx.beginPath();
-ctx.arc(150,150,100,0, Math.PI*2);
-ctx.fillStyle="yellow";
-ctx.fill();
-ctx.stroke();
-
-// Left Eye
-ctx.beginPath();
-ctx.arc(110,120,15,0, Math.PI*2);
-ctx.fillStyle="black";
-ctx.fill();
-
-// Right Eye
-ctx.beginPath();
-ctx.arc(190,120,15,0, Math.PI*2);
-ctx.fillStyle="black";
-ctx.fill();
-
-// Smile
-ctx.beginPath();
-ctx.arc(150,170,60,0, Math.PI);
-ctx.lineWidth=5;
-ctx.stroke();
-</script>
-
-</body>
-</html>
+       middle=(first+last)/2;
+    }
+    printf("\nElement not found");
+    return 0;
+}
 
 
+9th program
 
-9th Program 
 
+#include <stdio.h>
+#include <stdlib.h>
+void quicksort(int list[], int first, int last){
+    int pivot,i,j,temp;
+    if(first<last){
+        pivot=first;
+        i=first;
+        j=last;
+    while(i<j){
+        while(list[i]<=list[pivot]&&i<last)
+        i++;
+        while(list[j]>list[pivot])
+        j--;
+    if(i<j){
+        while(list[i]<=list[pivot]&&i<last)
+        temp=list[i];
+        list[i]=list[j];
+        list[j]=temp;
+    }
+    }
+    temp=list[pivot];
+    list[pivot]=list[j];
+    list[j]=temp;
+    quicksort(list,first,j-1);
+    quicksort(list,j+1,last);
+    }
+}
+int main(){
+    int list[20],size,i;
+    printf("\nEnter the number of elements:");
+    scanf("%d",&size);
+    printf("\nEnter %d elements:\n");
+    for(i=0;i<size;i++){
+        scanf("%d",&list[i]);
+    }
+    quicksort(list,0,size-1);
+    printf("\nList after sorting:\n");
+    for(i=0;i<size;i++){
+        printf("%d\n",list[i]);
+    }
+    return 0;
+}
 
-The 9th Program in Web Development will not work so write this Program instead 
-
-Audio & Video Files in HTML5
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Audio and Online Video Example</title>
-</head>
-
-<body>
-
-  <h2>Audio File Example</h2>
-  <audio controls>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-  <h2>Online Video Example</h2>
-  <video width="400" height="250" controls>
-    <source src="https://media.w3.org/2010/05/sintel/trailer.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-
-</body>
-
-</html>
 
 
 
 10th Program
 
 
-
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<webpage>
-<head>
- <title>Random Statement Display using XML</title>
- <style>
- body {
- font-family: Arial;
- text-align: center;
- padding-top: 50px;
- }
- p {
- font-size: 22px;
- font-weight: bold;
- color: darkblue;
- }
- </style>
-</head>
-<body>
- <h2>Random Statement Generator (XML + JavaScript)</h2>
- <p id="output">Your random message will appear here.</p>
- <script>
- var statements = [
- "Believe in yourself!",
- "Every day is a fresh start.",
- "Success comes with patience.",
- "Dream big and work hard.",
- "Be happy with what you have."
- ];
- var randomIndex = Math.floor(Math.random() * statements.length);
- document.getElementById("output").innerHTML = statements[randomIndex];
- </script>
-</body>
-</webpage>
-
-
-
-11th Program
-
-
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html>
-<webpage>
-<head>
- <title>Student List using XML</title>
- <style>
- body {
- font-family: Arial;
- text-align: center;
- margin-top: 30px;
- }
- table {
- margin: auto;
- border-collapse: collapse;
- width: 50%
- }
- th, td {
- border: 1px solid black;
- padding: 10px;
- }
- th {
- background-color: #e0e0e0;
- }
- </style>
-</head>
-<body>
- <h2>Student List</h2>
- <table>
- <tr>
- <th>Name</th>
- <th>Roll No</th>
- </tr>
- <tbody id="data"></tbody>
- </table>
- <script>
- var students = [
- { name: "Ellen", roll: "101" },
- { name: "Madelyn", roll: "102" },
- { name: "John", roll: "103" },
- { name: "Sophia", roll: "104" }
- ];
- var tableBody = document.getElementById("data");
- for (var i = 0; i < students.length; i++) {
- var row = "<tr><td>" + students[i].name + "</td><td>" + students[i].roll +
-"</td></tr>";
- tableBody.innerHTML += row;
- }
- </script>
-</body>
-</webpage>
-
-
-
-12th program
-
-
-<?xml version="1.0"?>
-<!DOCTYPE html>
-<webpage>
-<head><title>Books Catalog</title>
-<style>body{font-family:Arial;text-align:center;margin-top:30px;background:#fff}table{margin:auto;border-collapse:collapse;width:70%}th,td{border:1px solid #000;padding:10px}th{background-color:#e0e0e0}td{background-color:#fff}</style>
-</head><body><h2>Books_Catalog</h2><table><tr><th>Title</th><th>Author</th><th>Publisher</th><th>Year</th><th>Price (₹)</th></tr>
-<tbody id="bookData"></tbody></table><script>var b=[{t:"Learning XML",a:"Peter Wilson",p:"TechWorld",y:"2021",pr:"350"},{t:"JavaScript Guide",a:"Sarah Brown",p:"CodePress",y:"2022",pr:"450"},{t:"Web Designing",a:"John Adams",p:"WebTech",y:"2023",pr:"500"},{t:"Database Essentials",a:"Maria Lewis",p:"DataPub",y:"2020",pr:"400"}],d=document.getElementById("bookData");for(var i=0;i<b.length;i++)d.innerHTML+="<tr><td>"+b[i].t+"</td><td>"+b[i].a+"</td><td>"+b[i].p+"</td><td>"+b[i].y+"</td><td>"+b[i].pr+"</td></tr>";
-</script>
-</body>
-</webpage>
-
-
-
-13th Program 
-
-
-<!DOCTYPE html>
-<html>
-<head><title>Application Form</title>
-<style>body{font-family:Arial;text-align:center;margin-top:30px;background:#fff}form{width:350px;margin:auto;padding:20px;border:2px solid #000;border-radius:10px;background:#f9f9f9}input,select{width:90%;padding:8px;margin:10px 0;background:#fff}button{padding:10px 20px;background-color:#007bff;color:#fff;cursor:pointer;border:none}button:hover{background-color:#0056b3}.output{margin-top:30px;font-size:18px;color:darkgreen}
-</style>
-</head>
-<body><h2>Application Form</h2><form id="appForm"><input type="text" id="name" placeholder="Enter Name" required><input type="email" id="email" placeholder="Enter Email" required><select id="course"><option value="">Select Course</option><option value="Computer Science">Computer Science</option><option value="Commerce">Commerce</option><option value="Arts">Arts</option></select><button type="button" onclick="submitForm()">Submit</button></form><div class="output" id="result"></div>
-<script>
-function submitForm(){var n=document.getElementById("name").value,e=document.getElementById("email").value,c=document.getElementById("course").value,r=document.getElementById("result");if(n==""||e==""||c==""){alert("Please fill all the fields!");return}r.innerHTML="<strong>Application Submitted!</strong><br><br>Name: "+n+"<br>Email: "+e+"<br>Course: "+c;document.getElementById("appForm").reset()}
-</script>
-</body>
-</html>
-
-
-
-14th program
-
-<!DOCTYPE html>
-<html>
-<head><title>Number Guessing Game</title>
-<style>body{font-family:Arial;text-align:center;margin-top:50px;background:#fff}input{padding:8px;width:150px}button{padding:10px 15px;margin-left:10px;background-color:#28a745;border:none;color:white;cursor:pointer}button:hover{background-color:#1f7a34}#message{margin-top:25px;font-size:18px;font-weight:bold}</style>
-</head>
-<body><h2>Number Guessing Game</h2><p>Guess a number between <strong>1</strong> and <strong>50</strong></p><input type="number" id="guess" placeholder="Enter your guess"><button onclick="checkGuess()">Check</button><div id="message"></div>
-<script>
-var r=Math.floor(Math.random()*50)+1;function checkGuess(){var g=document.getElementById("guess").value,m=document.getElementById("message");if(g==""){m.innerHTML="Please enter a number!";m.style.color="red";return}if(g==r){m.innerHTML="Correct! You guessed the right number!";m.style.color="green"}else if(g>r){m.innerHTML="Too High! Try again.";m.style.color="blue"}else{m.innerHTML="Too Low! Try again.";m.style.color="orange"}}
-</script>
-</body>
-</html>
-
-15th program
-
-
-<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><title>DNA to RNA Converter</title>
-<style>body{font-family:Arial;text-align:center;margin-top:50px;background:#fff}h2{color:#333}p{color:#666}input{width:300px;padding:8px;margin:10px}button{padding:10px 20px;background:#007bff;color:white;border:none;cursor:pointer}button:hover{background:#0056b3}#result{margin-top:20px;font-weight:bold}
-</style>
-</head>
-<body>
-<h2>DNA to RNA Converter</h2><p>Enter DNA sequence (A,C,G,T only)</p><input type="text" id="dnaInput" placeholder="Example: ACTGGTAC"><br><button onclick="convertDNA()">Convert</button><div id="result"></div>
-<script>function convertDNA(){var d=document.getElementById("dnaInput").value.toUpperCase(),r=document.getElementById("result");if(d==""){r.innerHTML="Please enter DNA sequence";r.style.color="red";return}if(!/^[ACGT]+$/.test(d)){r.innerHTML="Invalid characters. Use A,C,G,T only.";r.style.color="red";return}r.innerHTML="RNA Sequence: "+d.replace(/T/g,"U");r.style.color="green"}
-</script>
-</body>
-</html>
 
